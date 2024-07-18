@@ -1,0 +1,20 @@
+import mongoose, { Document, Schema } from 'mongoose';
+
+interface IMuxData extends Document {
+  assetId: string;
+  playbackId?: string;
+  chapterId: string;
+}
+
+const muxDataSchema: Schema = new Schema(
+  {
+    assetId: { type: String, required: true },
+    playbackId: { type: String },
+    chapterId: { type: mongoose.Schema.Types.ObjectId, ref: 'Chapter', required: true, unique: true },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+export const MuxData = mongoose.model<IMuxData>('MuxData', muxDataSchema);
