@@ -1,6 +1,7 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema, Types } from 'mongoose';
 
-interface ICourse extends Document {
+export interface ICourse extends Document {
+  _id: string;
   userId: string;
   title: string;
   description?: string;
@@ -18,11 +19,11 @@ const courseSchema: Schema = new Schema(
     imageUrl: { type: String },
     price: { type: Number },
     isPublished: { type: Boolean, default: false },
-    categoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
+    categoryId: { type: String, ref: 'Category' },
   },
   {
     timestamps: true,
   }
 );
 
-export const Course = mongoose.model<ICourse>('Course', courseSchema);
+export const Course = mongoose.models.Course || mongoose.model<ICourse>('Course', courseSchema);
