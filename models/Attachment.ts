@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-interface IAttachment extends Document {
+export interface IAttachment extends Document {
+  _id: string
   name: string;
   url: string;
   courseId: string;
@@ -17,4 +18,4 @@ const attachmentSchema: Schema = new Schema(
   }
 );
 
-export const Attachment = mongoose.model<IAttachment>('Attachment', attachmentSchema);
+export const Attachment = mongoose.models.Attachment || mongoose.model<IAttachment>('Attachment', attachmentSchema);
