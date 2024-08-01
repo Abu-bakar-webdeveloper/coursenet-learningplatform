@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-interface IChapter extends Document {
+export interface IChapter extends Document {
   title: string;
   description?: string;
   videoUrl?: string;
@@ -25,4 +25,4 @@ const chapterSchema: Schema = new Schema(
   }
 );
 
-export const Chapter = mongoose.model<IChapter>('Chapter', chapterSchema);
+export const Chapter = mongoose.models.Chapter || mongoose.model<IChapter>('Chapter', chapterSchema);
