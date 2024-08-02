@@ -2,40 +2,59 @@ import Link from 'next/link'
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import { ArrowLeft, Eye, LayoutDashboard, Video } from 'lucide-react'
-import mongoose from 'mongoose';
-
-import connectDB from '@/lib/db';
-import { Chapter } from '@/models/Chapter';
-// import Course from '@/models/course'
+import mongoose from 'mongoose'
+import connectDB from '@/lib/db'
+import { Chapter } from '@/models/Chapter'
 // import { Banner } from '@/components/banner'
 import { IconBadge } from '@/components/icon-badge'
 // import { ChapterActions } from './_components/chapter-actions'
-// import { ChapterTitleForm } from './_components/chapter-title-form'
+import { ChapterTitleForm } from './_components/chapter-tittle-form';
 // import { ChapterVideoForm } from './_components/chapter-video-form'
 // import { ChapterAccessForm } from './_components/chapter-access-form'
 // import { ChapterDescriptionForm } from './_components/chapter-description-form'
 
-const ChapterIdPage = async ({
-  params,
-}: {
+interface ChapterIdPageProps {
   params: {
     courseId: string
     chapterId: string
   }
-}) => {
-  await connectDB();
+}
 
+const ChapterIdPage = async ({ params }: ChapterIdPageProps) => {
   const { userId } = auth()
 
   if (!userId) {
     return redirect('/')
   }
 
-  const chapterAggregate = await Chapter.aggregate([
+  // Ensure chapterId and courseId are valid before proceeding
+  if (!params.courseId || !params.chapterId) {
+    return redirect('/')
+  }
+
+  await connectDB()
+
+  let courseId, chapterId;
+  try {
+    courseId = new mongoose.Types.ObjectId(params.courseId)
+    chapterId = new mongoose.Types.ObjectId(params.chapterId)
+  } catch (error) {
+    return redirect('/') // Redirect if the IDs are invalid
+  }
+
+  const chapter = await Chapter.aggregate([
     {
       $match: {
-        _id: new mongoose.Types.ObjectId(params.chapterId),
-        courseId: new mongoose.Types.ObjectId(params.courseId),
+        _id: chapterId,
+        courseId: courseId,
+      },
+    },
+    {
+      $lookup: {
+        from: 'muxdatas', // replace with the correct collection name for Mux data
+        localField: '_id',
+        foreignField: 'chapterId',
+        as: 'muxData',
       },
     },
     {
@@ -49,25 +68,36 @@ const ChapterIdPage = async ({
     {
       $unwind: '$course',
     },
+    {
+      $project: {
+        'course.userId': 1,
+        title: 1,
+        description: 1,
+        videoUrl: 1,
+        isPublished: 1,
+        'muxData': { $arrayElemAt: ['$muxData', 0] }, // Assuming you want only the first muxData object
+      },
+    },
   ])
 
-  const chapter = chapterAggregate[0]
-
-  if (!chapter || chapter.course.userId !== userId) {
+  if (!chapter || chapter.length === 0 || chapter[0].course.userId.toString() !== userId) {
     return redirect('/')
   }
 
-  const requiredFields = [chapter.title, chapter.description, chapter.videoUrl]
+  const requiredFields = [
+    chapter[0].title,
+    chapter[0].description,
+    chapter[0].videoUrl,
+  ]
 
   const totalFields = requiredFields.length
   const completedFields = requiredFields.filter(Boolean).length
   const completionText = `(${completedFields}/${totalFields})`
-
   const isCompleted = requiredFields.every(Boolean)
 
   return (
     <>
-      {/* {!chapter.isPublished && (
+      {/* {!chapter[0].isPublished && (
         <Banner
           variant="warning"
           label="This chapter is unpublished. It will not be visible in the course."
@@ -88,9 +118,8 @@ const ChapterIdPage = async ({
             <div className="flex items-center justify-between w-full">
               <div className="flex flex-col gap-y-2">
                 <h1 className="text-2xl font-medium">Chapter Creation</h1>
-
                 <span className="text-sm text-slate-700">
-                  Complete all field {completionText}
+                  Complete all fields {completionText}
                 </span>
               </div>
 
@@ -98,7 +127,7 @@ const ChapterIdPage = async ({
                 disabled={!isCompleted}
                 courseId={params.courseId}
                 chapterId={params.chapterId}
-                isPublished={chapter.isPublished}
+                isPublished={chapter[0].isPublished}
               /> */}
             </div>
           </div>
@@ -108,18 +137,17 @@ const ChapterIdPage = async ({
           <div className="space-y-6">
             <div className="flex items-center gap-x-2">
               <IconBadge icon={LayoutDashboard} />
-
               <h2 className="text-xl">Customize your chapter</h2>
             </div>
 
-            {/* <ChapterTitleForm
-              initialData={chapter}
+            <ChapterTitleForm
+              initialData={chapter[0]}
               courseId={params.courseId}
               chapterId={params.chapterId}
-            /> */}
+            />
 
             {/* <ChapterDescriptionForm
-              initialData={chapter}
+              initialData={chapter[0]}
               courseId={params.courseId}
               chapterId={params.chapterId}
             /> */}
@@ -131,7 +159,7 @@ const ChapterIdPage = async ({
               </div>
 
               {/* <ChapterAccessForm
-                initialData={chapter}
+                initialData={chapter[0]}
                 courseId={params.courseId}
                 chapterId={params.chapterId}
               /> */}
@@ -145,7 +173,7 @@ const ChapterIdPage = async ({
             </div>
 
             {/* <ChapterVideoForm
-              initialData={chapter}
+              initialData={chapter[0]}
               courseId={params.courseId}
               chapterId={params.chapterId}
             /> */}

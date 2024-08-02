@@ -111,7 +111,7 @@ export const ChaptersList = ({
                       </Badge>
 
                       <Pencil
-                        onClick={() => onEdit(chapter.id)}
+                        onClick={() => onEdit(chapter._id)}
                         className="w-4 h-4 transition cursor-pointer hover:opacity-75"
                       />
                     </div>
