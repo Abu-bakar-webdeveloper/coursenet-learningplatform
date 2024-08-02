@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 interface IMuxData extends Document {
+  _id: string;
   assetId: string;
   playbackId?: string;
   chapterId: string;

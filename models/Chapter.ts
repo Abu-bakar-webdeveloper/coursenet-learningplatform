@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IChapter extends Document {
+  _id: string;
   title: string;
   description?: string;
   videoUrl?: string;

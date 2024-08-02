@@ -11,7 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 import { cn } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
-// import { ChaptersList } from './chapters-list'
+import { ChaptersList } from './chapters-list'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -62,26 +62,26 @@ export const ChaptersForm = ({ courseId, initialData }: ChaptersFormProps) => {
     }
   }
 
-//   const onReorder = async (updateData: { id: string; position: number }[]) => {
-//     try {
-//       setIsUpdating(true)
+  const onReorder = async (updateData: { id: string; position: number }[]) => {
+    try {
+      setIsUpdating(true)
 
-//       await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
-//         list: updateData,
-//       })
+      await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
+        list: updateData,
+      })
 
-//       toast.success('Chapters reordered')
-//       router.refresh()
-//     } catch (error) {
-//       toast.error('Something went wrong')
-//     } finally {
-//       setIsUpdating(false)
-//     }
-//   }
+      toast.success('Chapters reordered')
+      router.refresh()
+    } catch (error) {
+      toast.error('Something went wrong')
+    } finally {
+      setIsUpdating(false)
+    }
+  }
 
-//   const onEdit = (id: string) => {
-//     router.push(`/teacher/courses/${courseId}/chapters/${id}`)
-//   }
+  const onEdit = (id: string) => {
+    router.push(`/teacher/courses/${courseId}/chapters/${id}`)
+  }
 
   return (
     <div className="relative p-4 mt-6 border rounded-md bg-slate-100">
@@ -145,11 +145,11 @@ export const ChaptersForm = ({ courseId, initialData }: ChaptersFormProps) => {
           )}
         >
           {!initialData.chapters.length && 'No chapters'}
-          {/* <ChaptersList
+          {<ChaptersList
             onEdit={onEdit}
             onReorder={onReorder}
             items={initialData.chapters || []}
-          /> */}
+          />}
         </div>
       )}
 
