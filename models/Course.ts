@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
 import { IAttachment } from './Attachment';
+import { IChapter } from './Chapter';
 
 export interface ICourse extends Document {
   _id: string;
@@ -11,7 +12,7 @@ export interface ICourse extends Document {
   isPublished: boolean;
   categoryId?: string;
   attachments?: Types.ObjectId[] | IAttachment[]; // It can be an array of ObjectId or populated Attachment
-  // chapters?: Types.ObjectId[];
+  chapters?: Types.ObjectId[] | IChapter[];
 }
 
 const courseSchema: Schema = new Schema(

@@ -1,57 +1,50 @@
-import Link from 'next/link'
-import { auth } from '@clerk/nextjs/server'
-import { redirect } from 'next/navigation'
-import { ArrowLeft, Eye, LayoutDashboard, Video } from 'lucide-react'
-import mongoose from 'mongoose'
-import connectDB from '@/lib/db'
-import { Chapter } from '@/models/Chapter'
-// import { Banner } from '@/components/banner'
-import { IconBadge } from '@/components/icon-badge'
-// import { ChapterActions } from './_components/chapter-actions'
+import mongoose from 'mongoose';
+import { auth } from '@clerk/nextjs/server';
+import { redirect } from 'next/navigation';
+import { ArrowLeft, Eye, LayoutDashboard, Video } from 'lucide-react';
+import connectDB from '@/lib/db';
+import { Chapter } from '@/models/Chapter';
+import { MuxData } from '@/models/MuxData';
+// import { Banner } from '@/components/banner';
+import { IconBadge } from '@/components/icon-badge';
+// import { ChapterActions } from './_components/chapter-actions';
 import { ChapterTitleForm } from './_components/chapter-tittle-form';
-// import { ChapterVideoForm } from './_components/chapter-video-form'
-// import { ChapterAccessForm } from './_components/chapter-access-form'
-// import { ChapterDescriptionForm } from './_components/chapter-description-form'
+// import { ChapterVideoForm } from './_components/chapter-video-form';
+// import { ChapterAccessForm } from './_components/chapter-access-form';
+// import { ChapterDescriptionForm } from './_components/chapter-description-form';
+import Link from 'next/link';
 
 interface ChapterIdPageProps {
   params: {
-    courseId: string
-    chapterId: string
-  }
+    courseId: string;
+    chapterId: string;
+  };
 }
 
 const ChapterIdPage = async ({ params }: ChapterIdPageProps) => {
-  const { userId } = auth()
+  const { userId } = auth();
 
   if (!userId) {
-    return redirect('/')
+    return redirect('/');
   }
 
   // Ensure chapterId and courseId are valid before proceeding
   if (!params.courseId || !params.chapterId) {
-    return redirect('/')
+    return redirect('/');
   }
 
-  await connectDB()
-
-  let courseId, chapterId;
-  try {
-    courseId = new mongoose.Types.ObjectId(params.courseId)
-    chapterId = new mongoose.Types.ObjectId(params.chapterId)
-  } catch (error) {
-    return redirect('/') // Redirect if the IDs are invalid
-  }
+  await connectDB();
 
   const chapter = await Chapter.aggregate([
     {
       $match: {
-        _id: chapterId,
-        courseId: courseId,
+        _id: new mongoose.Types.ObjectId(params.chapterId),
+        courseId: new mongoose.Types.ObjectId(params.courseId),
       },
     },
     {
       $lookup: {
-        from: 'muxdatas', // replace with the correct collection name for Mux data
+        from: 'muxdatas',
         localField: '_id',
         foreignField: 'chapterId',
         as: 'muxData',
@@ -75,25 +68,25 @@ const ChapterIdPage = async ({ params }: ChapterIdPageProps) => {
         description: 1,
         videoUrl: 1,
         isPublished: 1,
-        'muxData': { $arrayElemAt: ['$muxData', 0] }, // Assuming you want only the first muxData object
+        'muxData': { $arrayElemAt: ['$muxData', 0] },
       },
     },
-  ])
+  ]);
 
-  if (!chapter || chapter.length === 0 || chapter[0].course.userId.toString() !== userId) {
-    return redirect('/')
+  if (!chapter || chapter.length === 0 || chapter[0].course.userId !== userId) {
+    return redirect('/');
   }
 
   const requiredFields = [
     chapter[0].title,
     chapter[0].description,
     chapter[0].videoUrl,
-  ]
+  ];
 
-  const totalFields = requiredFields.length
-  const completedFields = requiredFields.filter(Boolean).length
-  const completionText = `(${completedFields}/${totalFields})`
-  const isCompleted = requiredFields.every(Boolean)
+  const totalFields = requiredFields.length;
+  const completedFields = requiredFields.filter(Boolean).length;
+  const completionText = `(${completedFields}/${totalFields})`;
+  const isCompleted = requiredFields.every(Boolean);
 
   return (
     <>
@@ -181,7 +174,7 @@ const ChapterIdPage = async ({ params }: ChapterIdPageProps) => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default ChapterIdPage
+export default ChapterIdPage;

@@ -62,7 +62,7 @@ const CourseIdPage = async ({ params }: CourseIdPageProps) => {
         as: 'chapters',
       },
     },
-  ]);
+  ]).exec();
 
   if (!course || course.length === 0 || course[0].userId.toString() !== userId) {
     return redirect('/');

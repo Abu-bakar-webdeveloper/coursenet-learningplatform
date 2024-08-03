@@ -80,8 +80,18 @@ export const ChaptersForm = ({ courseId, initialData }: ChaptersFormProps) => {
   }
 
   const onEdit = (id: string) => {
-    router.push(`/teacher/courses/${courseId}/chapters/${id}`)
-  }
+    const editPath = `/teacher/courses/${courseId}/chapters/${id}`;
+    console.log('Navigating to:', editPath);
+    
+    // Check if the id and courseId are valid
+    if (id && courseId) {
+      router.push(editPath);
+    } else {
+      console.error('Invalid chapter or course ID');
+      toast.error('Unable to navigate to the chapter edit page');
+    }
+  };
+  
 
   return (
     <div className="relative p-4 mt-6 border rounded-md bg-slate-100">
