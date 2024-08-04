@@ -10,7 +10,7 @@ import { IconBadge } from '@/components/icon-badge';
 // import { ChapterActions } from './_components/chapter-actions';
 import { ChapterTitleForm } from './_components/chapter-tittle-form';
 // import { ChapterVideoForm } from './_components/chapter-video-form';
-// import { ChapterAccessForm } from './_components/chapter-access-form';
+import { ChapterAccessForm } from './_components/chapter-access-form';
 import { ChapterDescriptionForm } from './_components/chapter-description-form';
 import Link from 'next/link';
 
@@ -151,11 +151,11 @@ const ChapterIdPage = async ({ params }: ChapterIdPageProps) => {
                 <h2 className="text-xl">Access Settings</h2>
               </div>
 
-              {/* <ChapterAccessForm
+              <ChapterAccessForm
                 initialData={chapter[0]}
                 courseId={params.courseId}
                 chapterId={params.chapterId}
-              /> */}
+              />
             </div>
           </div>
 
