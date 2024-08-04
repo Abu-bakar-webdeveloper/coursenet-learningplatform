@@ -11,7 +11,7 @@ import { IconBadge } from '@/components/icon-badge';
 import { ChapterTitleForm } from './_components/chapter-tittle-form';
 // import { ChapterVideoForm } from './_components/chapter-video-form';
 // import { ChapterAccessForm } from './_components/chapter-access-form';
-// import { ChapterDescriptionForm } from './_components/chapter-description-form';
+import { ChapterDescriptionForm } from './_components/chapter-description-form';
 import Link from 'next/link';
 
 interface ChapterIdPageProps {
@@ -139,11 +139,11 @@ const ChapterIdPage = async ({ params }: ChapterIdPageProps) => {
               chapterId={params.chapterId}
             />
 
-            {/* <ChapterDescriptionForm
+            <ChapterDescriptionForm
               initialData={chapter[0]}
               courseId={params.courseId}
               chapterId={params.chapterId}
-            /> */}
+            />
 
             <div>
               <div className="flex items-center gap-x-2">
