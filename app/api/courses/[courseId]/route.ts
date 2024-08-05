@@ -1,20 +1,24 @@
-// import Mux from '@mux/mux-node';
+import Mux from '@mux/mux-node';
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import connectDB from '@/lib/db';
 import { Course } from '@/models/Course';
-// import { isTeacher } from '@/lib/teacher';
+import { Chapter, IChapter } from '@/models/Chapter';
+import { MuxData } from '@/models/MuxData';
 
-// const { Video } = new Mux(
-//   process.env.MUX_TOKEN_ID as string,
-//   process.env.MUX_TOKEN_SECRET as string,
-// );
+const mux = new Mux({
+  tokenId: process.env.MUX_TOKEN_ID as string,
+  tokenSecret: process.env.MUX_TOKEN_SECRET as string,
+});
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { courseId: string } },
+  { params }: { params: { courseId: string } }
 ) {
   try {
+    await connectDB();
+
     const { userId } = auth();
     const { courseId } = params;
 
@@ -22,35 +26,69 @@ export async function DELETE(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    await connectDB();
+    // Use aggregate to find the course with its chapters and their muxData
+    const course = await Course.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(courseId),
+          userId: userId,
+        },
+      },
+      {
+        $lookup: {
+          from: 'chapters',
+          localField: '_id',
+          foreignField: 'courseId',
+          as: 'chapters',
+        },
+      },
+      {
+        $unwind: '$chapters',
+      },
+      {
+        $lookup: {
+          from: 'muxdatas',
+          localField: 'chapters._id',
+          foreignField: 'chapterId',
+          as: 'chapters.muxData',
+        },
+      },
+      {
+        $unwind: {
+          path: '$chapters.muxData',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          course: { $first: '$$ROOT' },
+          chapters: { $push: '$chapters' },
+        },
+      },
+    ]);
 
-    const course = await Course.findOne({
-      _id: courseId,
-      userId,
-    })
-    // .populate({
-    //   path: 'chapters',
-    //   populate: {
-    //     path: 'muxData',
-    //   },
-    // });
-
-    if (!course) {
+    if (!course.length) {
       return new NextResponse('Not found', { status: 404 });
     }
 
-    // for (const chapter of course.chapters) {
-    //   if (chapter.muxData?.assetId) {
-    //     await Video.Assets.del(chapter.muxData.assetId).catch(() => {});
-    //   }
-    // }
+    // Iterate over chapters to delete associated Mux assets
+    for (const chapter of course[0].chapters) {
+      if (chapter.muxData?.assetId) {
+        try {
+          await mux.video.assets.delete(chapter.muxData.assetId);
+        } catch (err) {
+          console.warn(`Failed to delete Mux asset for chapter ${chapter._id}`);
+        }
+      }
+    }
 
-    await Course.deleteOne({
-      _id: courseId,
-      userId,
-    });
+    // Delete the course, chapters, and muxData
+    await Course.deleteOne({ _id: courseId, userId });
+    await Chapter.deleteMany({ courseId });
+    await MuxData.deleteMany({ chapterId: { $in: course[0].chapters.map((c: IChapter) => c._id) } });
 
-    return NextResponse.json(course);
+    return NextResponse.json({ success: true, message: 'Course deleted successfully' });
   } catch (error) {
     console.error('[COURSE_ID_DELETE]', error);
     return new NextResponse('Internal server error', { status: 500 });
@@ -59,9 +97,11 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { courseId: string } },
+  { params }: { params: { courseId: string } }
 ) {
   try {
+    await connectDB();
+
     const { userId } = auth();
     const { courseId } = params;
     const values = await req.json();
@@ -70,20 +110,20 @@ export async function PATCH(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    await connectDB();
-
-    const course = await Course.findOneAndUpdate(
-      {
-        _id: courseId,
-        userId,
-      },
-      values,
+    // Update the course with the provided values
+    const updatedCourse = await Course.findOneAndUpdate(
+      { _id: courseId, userId },
+      { ...values },
       { new: true }
     );
 
-    return NextResponse.json(course);
+    if (!updatedCourse) {
+      return new NextResponse('Not found', { status: 404 });
+    }
+
+    return NextResponse.json(updatedCourse);
   } catch (error) {
-    console.error('[COURSE_ID]', error);
+    console.error('[COURSE_ID_PATCH]', error);
     return new NextResponse('Internal server error', { status: 500 });
   }
 }

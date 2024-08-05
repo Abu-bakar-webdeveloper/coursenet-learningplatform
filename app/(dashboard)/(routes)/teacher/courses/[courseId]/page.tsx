@@ -10,8 +10,8 @@ import mongoose from 'mongoose';
 import connectDB from '@/lib/db';
 import { Course } from '@/models/Course';
 import { Category } from '@/models/Category';
-// import { Banner } from '@/components/banner';
-// import { Actions } from './_components/actions';
+import { Banner } from '@/components/banner';
+import { Actions } from './_components/actions';
 import { IconBadge } from '@/components/icon-badge';
 import { TitleForm } from './_components/title-form';
 import { ImageForm } from './_components/image-form';
@@ -86,12 +86,12 @@ const CourseIdPage = async ({ params }: CourseIdPageProps) => {
 
   return (
     <>
-      {/* {!course[0].isPublished && (
+      {!course[0].isPublished && (
         <Banner
           variant="warning"
           label="This course is unpublished. It will not be visible to students."
         />
-      )} */}
+      )}
 
       <div className="p-6">
         <div className="flex items-center justify-between">
@@ -102,11 +102,11 @@ const CourseIdPage = async ({ params }: CourseIdPageProps) => {
             </span>
           </div>
 
-          {/* <Actions
+          <Actions
             courseId={course[0]._id}
             disabled={!isCompleted}
             isPublished={course[0].isPublished}
-          /> */}
+          />
         </div>
 
         <div className="grid grid-cols-1 gap-6 mt-16 md:grid-cols-2">
