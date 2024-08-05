@@ -66,7 +66,7 @@ export const ChapterAccessForm = ({
   }
 
   return (
-    <div className="relative p-4 mt-6 border rounded-md bg-slate-100">
+    <div className="p-4 mt-6 border rounded-md bg-slate-100">
       {form.formState.isSubmitting && (
         <div className="absolute top-0 right-0 flex items-center justify-center w-full h-full rounded-md bg-slate-500/20">
           <Loader2 className="w-6 h-6 animate-spin text-sky-700" />

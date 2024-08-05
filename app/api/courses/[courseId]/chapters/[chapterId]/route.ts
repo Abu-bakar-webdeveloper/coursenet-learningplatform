@@ -1,7 +1,6 @@
 import Mux from '@mux/mux-node';
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
-import mongoose from 'mongoose';
 import connectDB from '@/lib/db';
 
 // import { isTeacher } from '@/lib/teacher';
@@ -34,7 +33,7 @@ export async function DELETE(
     const courseOwner = await Course.findOne({
       _id: courseId,
       userId: userId,
-      'chapters._id': chapterId, // Ensure the chapter belongs to this course
+      chapters: chapterId, // Ensure the chapter belongs to this course
     });
 
     if (!courseOwner) {
@@ -120,6 +119,8 @@ export async function PATCH(
     if (!chapter) {
       return new NextResponse('Not found', { status: 404 });
     }
+
+    console.log(chapter)
 
     if (values.videoUrl) {
       const existingMuxData = await MuxData.findOne({ chapterId });

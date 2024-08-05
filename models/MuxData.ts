@@ -18,4 +18,4 @@ const muxDataSchema: Schema = new Schema(
   }
 );
 
-export const MuxData = mongoose.model<IMuxData>('MuxData', muxDataSchema);
+export const MuxData = mongoose.models.MuxData || mongoose.model<IMuxData>('MuxData', muxDataSchema);

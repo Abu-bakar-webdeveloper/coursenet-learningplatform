@@ -5,9 +5,9 @@ import { ArrowLeft, Eye, LayoutDashboard, Video } from 'lucide-react';
 import connectDB from '@/lib/db';
 import { Chapter } from '@/models/Chapter';
 import { MuxData } from '@/models/MuxData';
-// import { Banner } from '@/components/banner';
+import { Banner } from '@/components/banner';
 import { IconBadge } from '@/components/icon-badge';
-// import { ChapterActions } from './_components/chapter-actions';
+import { ChapterActions } from './_components/chapter-actions';
 import { ChapterTitleForm } from './_components/chapter-tittle-form';
 import { ChapterVideoForm } from './_components/chapter-video-form';
 import { ChapterAccessForm } from './_components/chapter-access-form';
@@ -71,7 +71,7 @@ const ChapterIdPage = async ({ params }: ChapterIdPageProps) => {
         'muxData': { $arrayElemAt: ['$muxData', 0] },
       },
     },
-  ]);
+  ]).exec();
 
   if (!chapter || chapter.length === 0 || chapter[0].course.userId !== userId) {
     return redirect('/');
@@ -90,12 +90,12 @@ const ChapterIdPage = async ({ params }: ChapterIdPageProps) => {
 
   return (
     <>
-      {/* {!chapter[0].isPublished && (
+      {!chapter[0].isPublished && (
         <Banner
           variant="warning"
           label="This chapter is unpublished. It will not be visible in the course."
         />
-      )} */}
+      )}
 
       <div className="p-6">
         <div className="flex items-center justify-between">
@@ -116,12 +116,12 @@ const ChapterIdPage = async ({ params }: ChapterIdPageProps) => {
                 </span>
               </div>
 
-              {/* <ChapterActions
+              <ChapterActions
                 disabled={!isCompleted}
                 courseId={params.courseId}
                 chapterId={params.chapterId}
                 isPublished={chapter[0].isPublished}
-              /> */}
+              />
             </div>
           </div>
         </div>
