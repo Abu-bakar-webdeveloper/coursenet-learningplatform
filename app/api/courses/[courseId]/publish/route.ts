@@ -1,13 +1,12 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
-// import { isTeacher } from '@/lib/teacher';
 import { Course } from '@/models/Course';
 import { Chapter } from '@/models/Chapter';
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { courseId: string } }
+  { params }: { params: { courseId: string } },
 ) {
   try {
     await connectDB(); // Ensure the database connection is established
@@ -19,47 +18,31 @@ export async function PATCH(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    // Aggregate the chapters to check if there is any published chapter
-    const chapters = await Chapter.aggregate([
-      { $match: { courseId: courseId } },
-      {
-        $group: {
-          _id: null,
-          hasPublishedChapters: {
-            $sum: { $cond: ['$isPublished', 1, 0] }
-          }
-        }
-      }
-    ]);
-
-    const hasPublishedChapters = chapters.length > 0 && chapters[0].hasPublishedChapters > 0;
-
-    // Find the course directly without populating
+    // Find the course and its associated chapters and muxData
     const course = await Course.findOne({ _id: courseId, userId });
 
     if (!course) {
       return new NextResponse('Not found', { status: 404 });
     }
 
-    // Validate that the course has required fields and at least one published chapter
+    // Check if the course has any published chapters
+    const chapters = await Chapter.find({ courseId, isPublished: true });
+
     if (
       !course.title ||
       !course.imageUrl ||
       !course.categoryId ||
       !course.description ||
-      !hasPublishedChapters
+      !chapters.length
     ) {
       return new NextResponse('Missing required fields', { status: 400 });
     }
 
     // Update the course to be published
-    const publishedCourse = await Course.findOneAndUpdate(
-      { _id: courseId, userId },
-      { isPublished: true },
-      { new: true }
-    );
+    course.isPublished = true;
+    await course.save();
 
-    return NextResponse.json(publishedCourse);
+    return NextResponse.json(course);
   } catch (error) {
     console.error('[COURSE_ID_PUBLISH]', error);
     return new NextResponse('Internal server error', { status: 500 });
