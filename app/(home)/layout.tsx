@@ -10,7 +10,7 @@ const Navbar = () => {
   let Links = [
     { name: "Home", link: "/" },
     { name: "Courses", link: "/student" },
-    { name: "Teacher", link: "/teacher" },
+    { name: "Teacher", link: "/teacher/courses" },
     { name: "Projects", link: "#projects" },
     { name: "Contact", link: "#contact" },
   ];
@@ -18,7 +18,7 @@ const Navbar = () => {
     <div className="shadow-md w-full top-0 left-0 bg-primary">
       <div className=" md:flex items-center justify-between py-4  md:px-10 px-7">
         <div className="text-2xl font-bold flex items-center font-[Poppins] text-white">
-          <Link href="/">PORTFOLIO</Link>
+          <Link href="/">CourseNet</Link>
         </div>
         <div onClick={() => setIsOpen(!isOpen)} className="md:hidden text-2xl absolute right-12 top-5 cursor-pointer">
           {isOpen ? <X /> : <Menu />}
@@ -38,7 +38,9 @@ const Navbar = () => {
               </a>
             </li>
           ))}
+          <div className="ml-5">
           <UserButton />
+          </div>
         </ul>
       </div>
     </div>
