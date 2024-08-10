@@ -3,10 +3,10 @@ import { redirect } from 'next/navigation';
 
 import connectDB from '@/lib/db';
 import { Category } from '@/models/Category';
-// import { getCourses } from '@/actions/get-courses';
+import { getCourses } from '@/actions/get-courses';
 import { Categories } from './_components/categories';
-// import { SearchInput } from '@/components/search-input';
-// import { CoursesList } from '@/components/courses-list';
+import { SearchInput } from '@/components/search-input';
+import { CoursesList } from '@/components/courses-list';
 
 interface SearchPageProps {
   searchParams: {
@@ -27,20 +27,22 @@ const SearchPage = async ({ searchParams }: SearchPageProps) => {
   const categories = await Category.find({}).sort({ name: 1 });
 
   // Fetch courses using a custom function that works with Mongoose
-  // const courses = await getCourses({
-  //   userId,
-  //   ...searchParams,
-  // });
+  const courses = await getCourses({
+    userId,
+    ...searchParams,
+  });
+
+  console.log(courses)
 
   return (
     <>
       <div className="block px-6 pt-6 md:hidden md:mb-0">
-        {/* <SearchInput /> */}
+        <SearchInput />
       </div>
 
       <div className="p-6 space-y-4">
         <Categories items={categories} />
-        {/* <CoursesList items={courses} /> */}
+        <CoursesList items={courses} />
       </div>
     </>
   );

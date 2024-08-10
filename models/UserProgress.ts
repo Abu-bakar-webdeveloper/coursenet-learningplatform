@@ -19,4 +19,4 @@ const userProgressSchema: Schema = new Schema(
 
 userProgressSchema.index({ userId: 1, chapterId: 1 }, { unique: true });
 
-export const UserProgress = mongoose.model<IUserProgress>('UserProgress', userProgressSchema);
+export const UserProgress = mongoose.models.UserProgress || mongoose.model<IUserProgress>('UserProgress', userProgressSchema);
