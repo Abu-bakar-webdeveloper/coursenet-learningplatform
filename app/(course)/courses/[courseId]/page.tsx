@@ -1,12 +1,13 @@
 import { redirect } from 'next/navigation';
 import connectDB from '@/lib/db';
 import { Course } from '@/models/Course';
+import mongoose from 'mongoose';
 
 export default async function CourseIdPage({ params }: { params: { courseId: string } }) {
   await connectDB(); // Ensure the database connection is established
 
   const course = await Course.aggregate([
-    { $match: { _id: params.courseId } },
+    { $match: { _id: new mongoose.Types.ObjectId(params.courseId) } },
     {
       $lookup: {
         from: 'chapters',
@@ -20,6 +21,8 @@ export default async function CourseIdPage({ params }: { params: { courseId: str
       },
     },
   ]);
+
+  console.log(course)
 
   if (!course || course.length === 0 || course[0].chapters.length === 0) {
     return redirect('/');

@@ -6,9 +6,9 @@ import { Banner } from '@/components/banner';
 import { Preview } from '@/components/preview';
 import { getChapter } from '@/actions/get-chapter';
 import { Separator } from '@/components/ui/separator'
-import { VideoPlayer } from './_components/video-player'
-import { CurseEnrollButton } from './_components/curse-enroll-button'
-import { CourseProgressButton } from './_components/course-progress-button'
+import { VideoPlayer } from './_components/video-player';
+import { CurseEnrollButton } from './_components/course-enroll-button';
+// import { CourseProgressButton } from './_components/course-progress-button'
 
 export default async function ChapterIdPage({
   params,
@@ -75,19 +75,19 @@ export default async function ChapterIdPage({
           <div className="flex flex-col items-center justify-between p-4 md:flex-row">
             <h2 className="mb-2 text-2xl font-semibold">{chapter.title}</h2>
 
-            {purchase ? (
+            {/* {purchase ? (
               <CourseProgressButton
                 courseId={params.courseId}
                 chapterId={params.chapterId}
                 nextChapterId={nextChapter?._id}
                 isCompleted={!!userProgress?.isCompleted}
               />
-            ) : (
+            ) : ( */}
               <CurseEnrollButton
                 price={course.price!}
                 courseId={params.courseId}
               />
-            )}
+            {/* )} */}
           </div>
 
           <Separator />

@@ -5,6 +5,8 @@ import { Course } from '@/models/Course';
 import { getProgress } from '@/actions/get-progress';
 import { CourseNavbar } from './_components/course-navbar';
 import { CourseSidebar } from './_components/course-sidebar';
+import mongoose from 'mongoose';
+
 
 export default async function CourseLayout({
   params,
@@ -20,7 +22,7 @@ export default async function CourseLayout({
   await connectDB(); // Ensure the database connection is established
 
   const course = await Course.aggregate([
-    { $match: { _id: params.courseId } },
+    { $match: { _id: new mongoose.Types.ObjectId(params.courseId) } },
     {
       $lookup: {
         from: 'chapters',
@@ -43,6 +45,8 @@ export default async function CourseLayout({
       },
     },
   ]);
+
+  console.log(course)
 
   if (!course || course.length === 0) return redirect('/');
 

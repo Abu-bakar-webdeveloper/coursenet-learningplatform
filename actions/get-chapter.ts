@@ -21,22 +21,20 @@ export const getChapter = async ({
   try {
     await connectDB(); // Ensure the database connection is established
 
-    // Find the purchase for the user and course
+    // If IDs are not ObjectId, directly use them without conversion
     const purchase = await Purchase.findOne({
-      userId: new mongoose.Types.ObjectId(userId),
-      courseId: new mongoose.Types.ObjectId(courseId),
+      userId,  // Use userId as is
+      courseId, // Use courseId as is
     });
 
-    // Find the course if it's published
     const course = await Course.findOne({
-      _id: new mongoose.Types.ObjectId(courseId),
+      _id: courseId,  // Use courseId as is
       isPublished: true,
     }).select('price');
 
-    // Find the chapter if it's published
     const chapter = await Chapter.findOne({
-      _id: new mongoose.Types.ObjectId(chapterId),
-      courseId: new mongoose.Types.ObjectId(courseId),
+      _id: chapterId,  // Use chapterId as is
+      courseId,
       isPublished: true,
     });
 
@@ -49,30 +47,26 @@ export const getChapter = async ({
     let nextChapter: IChapter | null = null;
 
     if (purchase) {
-      // Fetch all attachments related to the course
       attachments = await Attachment.find({
-        courseId: new mongoose.Types.ObjectId(courseId),
+        courseId,
       });
     }
 
     if (chapter.isFree || purchase) {
-      // Fetch mux data for the chapter
       muxData = await MuxData.findOne({
-        chapterId: new mongoose.Types.ObjectId(chapterId),
+        chapterId,
       });
 
-      // Fetch the next chapter in sequence
       nextChapter = await Chapter.findOne({
-        courseId: new mongoose.Types.ObjectId(courseId),
+        courseId,
         isPublished: true,
         position: { $gt: chapter.position },
       }).sort({ position: 'asc' });
     }
 
-    // Fetch user progress for the chapter
     const userProgress = await UserProgress.findOne({
-      userId: new mongoose.Types.ObjectId(userId),
-      chapterId: new mongoose.Types.ObjectId(chapterId),
+      userId,
+      chapterId,
     });
 
     return {
