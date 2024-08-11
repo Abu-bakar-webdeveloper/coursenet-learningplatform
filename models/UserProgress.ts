@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-interface IUserProgress extends Document {
+export interface IUserProgress extends Document {
   userId: string;
   isCompleted: boolean;
   chapterId: string;
