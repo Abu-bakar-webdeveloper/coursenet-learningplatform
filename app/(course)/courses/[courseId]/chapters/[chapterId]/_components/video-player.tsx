@@ -8,7 +8,7 @@ import { Loader2, Lock } from 'lucide-react'
 import MuxPlayer from '@mux/mux-player-react'
 
 import { cn } from '@/lib/utils'
-// import { useConfettiStore } from '@/hooks/use-confetti-store'
+import { useConfettiStore } from '@/hooks/use-confetti-store'
 
 interface VideoPlayerProps {
   title: string
@@ -30,7 +30,7 @@ export const VideoPlayer = ({
   nextChapterId,
 }: VideoPlayerProps) => {
   const router = useRouter()
-//   const { onOpen } = useConfettiStore()
+  const { onOpen } = useConfettiStore()
   const [isReady, setIsReady] = useState(false)
 
   const onEnded = async () => {
@@ -50,7 +50,7 @@ export const VideoPlayer = ({
 
       if (!nextChapterId) {
         toast.success('Course completed!')
-        // onOpen()
+        onOpen()
       }
 
       toast.success('Progress updated')

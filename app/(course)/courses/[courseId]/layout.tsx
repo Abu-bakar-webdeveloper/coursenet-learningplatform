@@ -19,7 +19,7 @@ export default async function CourseLayout({
 
   if (!userId) return redirect('/');
 
-  await connectDB(); // Ensure the database connection is established
+  await connectDB();
 
   const course = await Course.aggregate([
     { $match: { _id: new mongoose.Types.ObjectId(params.courseId) } },

@@ -1,4 +1,4 @@
-// import { Progress } from '@/components/ui/progress'
+import { Progress } from '@/components/ui/progress'
 import { cn } from '@/lib/utils'
 
 interface CourseProgressProps {
@@ -24,7 +24,7 @@ export const CourseProgress = async ({
 }: CourseProgressProps) => {
   return (
     <div>
-      {/* <Progress value={value} className="h-2" variant={variant} /> */}
+      <Progress value={value} className="h-2" variant={variant} />
 
       <p
         className={cn(

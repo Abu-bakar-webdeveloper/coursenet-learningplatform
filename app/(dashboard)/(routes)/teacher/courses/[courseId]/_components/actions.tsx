@@ -7,7 +7,7 @@ import { Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
-// import { useConfettiStore } from '@/hooks/use-confetti-store'
+import { useConfettiStore } from '@/hooks/use-confetti-store'
 import { ConfirmModal } from '@/components/modals/confirm-modal'
 
 interface ActionsProps {
@@ -18,7 +18,7 @@ interface ActionsProps {
 
 export const Actions = ({ courseId, disabled, isPublished }: ActionsProps) => {
   const router = useRouter()
-//   const { onOpen } = useConfettiStore()
+  const { onOpen } = useConfettiStore()
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -30,7 +30,7 @@ export const Actions = ({ courseId, disabled, isPublished }: ActionsProps) => {
         await axios.patch(`/api/courses/${courseId}/unpublish`)
       } else {
         await axios.patch(`/api/courses/${courseId}/publish`)
-        // onOpen()
+        onOpen()
       }
 
       router.refresh()
