@@ -97,7 +97,7 @@ export async function PATCH(
     const { isPublished, ...values } = await req.json();
 
     if (!userId) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse('userID not found Unauthorized', { status: 401 });
     }
 
     const courseOwner = await Course.findOne({
@@ -107,7 +107,7 @@ export async function PATCH(
     });
 
     if (!courseOwner) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse('courseowner Unauthorized', { status: 401 });
     }
 
     const chapter = await Chapter.findByIdAndUpdate(

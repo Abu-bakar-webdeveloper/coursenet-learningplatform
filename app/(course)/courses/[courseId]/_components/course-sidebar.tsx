@@ -8,7 +8,7 @@ import { CourseProgress } from '@/components/course-progress';
 
 interface CourseSidebarProps {
   progressCount: number;
-  course: any; // We'll define the shape of the course using Mongoose below
+  course: any;
 }
 
 export const CourseSidebar = async ({ course, progressCount }: CourseSidebarProps) => {
@@ -16,7 +16,7 @@ export const CourseSidebar = async ({ course, progressCount }: CourseSidebarProp
 
   if (!userId) return redirect('/');
 
-  await connectDB(); // Ensure the database connection is established
+  await connectDB();
 
   const purchase = await Purchase.findOne({
     userId,
