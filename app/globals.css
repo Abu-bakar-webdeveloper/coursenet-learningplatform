@@ -1,6 +1,11 @@
-@tailwind base;
+  @tailwind base;
   @tailwind components;
   @tailwind utilities;
+
+  .hero {
+    @apply bg-cover bg-fixed bg-center text-white py-20 px-10;
+    background-image: url('/bg.jpeg');
+  }
 
   html,
   body,
