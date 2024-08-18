@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { UserButton } from "@clerk/nextjs";
 import { ReactNode } from "react";
+import AiChatButton from "@/components/AiChatButton";
 
 interface LayoutProps {
   children: ReactNode;
@@ -47,6 +48,9 @@ const Layout = ({ children }: LayoutProps) => {
             ))}
             <div className="ml-5">
               <UserButton />
+            </div>
+            <div className="ml-5">
+              <AiChatButton />
             </div>
           </ul>
         </div>
