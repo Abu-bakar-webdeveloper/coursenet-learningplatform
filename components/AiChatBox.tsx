@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { useChat, Message } from "ai/react";
-import { Bot, XCircle } from "lucide-react";
+import { Bot, SendHorizonal, Trash, XCircle } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 
@@ -20,6 +20,8 @@ export default function AiChatBox({ open, onclose }: AiChatBoxProps) {
     error,
   } = useChat();
 
+  const lastMessageIsUser = messages[messages.length - 1]?.role === "user";
+
   return (
     <div
       className={cn(
@@ -38,6 +40,26 @@ export default function AiChatBox({ open, onclose }: AiChatBoxProps) {
             ))
            }
            {
+            isLoading && lastMessageIsUser && (
+              <ChatMessage 
+                message={{
+                  id: "loading",
+                  role: "assistant",
+                  content: "Generating..."
+                }}
+              />
+            )
+           }
+           {error && (
+             <ChatMessage 
+             message={{
+               id: "error",
+               role: "assistant",
+               content: "Something went wrong please try again"
+             }}
+           />
+           )}
+           {
             !error && messages.length === 0 && (
                 <div className="flex flex-col h-full items-center justify-center gap-3 text-center mx-8">
                     <Bot size={28}/>
@@ -51,6 +73,29 @@ export default function AiChatBox({ open, onclose }: AiChatBoxProps) {
             )
            }
         </div>
+        <form onSubmit={handleSubmit} className="m-3 flex gap-1">
+          <button
+            type="button"
+            className="flex items-center justify-center w-10 flex-none"
+            title="Clear chat"
+            onClick={() => setMessages([])}
+          >
+            <Trash size={24}/>
+          </button>
+          <input
+            value={input}
+            onChange={handleInputChange}
+            placeholder="Start Chat..."
+            className="grow rounded border bg-background px-5 py-2"
+          />
+          <button
+            type="submit"
+            className="flex items-center justify-center w-10 flex-none disabled:opacity-50"
+            disabled={isLoading || input.length === 0}
+          >
+            <SendHorizonal size={24} />
+          </button>
+        </form>
       </div>
     </div>
   );
