@@ -26,7 +26,7 @@ export async function DELETE(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    // Use aggregate to find the course with its chapters and their muxData
+    // Fetch the course with chapters and muxData
     const course = await Course.aggregate([
       {
         $match: {
@@ -43,7 +43,10 @@ export async function DELETE(
         },
       },
       {
-        $unwind: '$chapters',
+        $unwind: {
+          path: '$chapters',
+          preserveNullAndEmptyArrays: true,
+        },
       },
       {
         $lookup: {
@@ -72,21 +75,25 @@ export async function DELETE(
       return new NextResponse('Not found', { status: 404 });
     }
 
-    // Iterate over chapters to delete associated Mux assets
-    for (const chapter of course[0].chapters) {
-      if (chapter.muxData?.assetId) {
-        try {
-          await mux.video.assets.delete(chapter.muxData.assetId);
-        } catch (err) {
-          console.warn(`Failed to delete Mux asset for chapter ${chapter._id}`);
+    // Handle case where there are no chapters or attachments
+    if (course[0].chapters.length > 0) {
+      for (const chapter of course[0].chapters) {
+        if (chapter.muxData?.assetId) {
+          try {
+            await mux.video.assets.delete(chapter.muxData.assetId);
+          } catch (err) {
+            console.warn(`Failed to delete Mux asset for chapter ${chapter._id}`);
+          }
         }
       }
     }
 
     // Delete the course, chapters, and muxData
     await Course.deleteOne({ _id: courseId, userId });
-    await Chapter.deleteMany({ courseId });
-    await MuxData.deleteMany({ chapterId: { $in: course[0].chapters.map((c: IChapter) => c._id) } });
+    if (course[0].chapters.length > 0) {
+      await Chapter.deleteMany({ courseId });
+      await MuxData.deleteMany({ chapterId: { $in: course[0].chapters.map((c: IChapter) => c._id) } });
+    }
 
     return NextResponse.json({ success: true, message: 'Course deleted successfully' });
   } catch (error) {
@@ -94,6 +101,8 @@ export async function DELETE(
     return new NextResponse('Internal server error', { status: 500 });
   }
 }
+
+
 
 export async function PATCH(
   req: Request,

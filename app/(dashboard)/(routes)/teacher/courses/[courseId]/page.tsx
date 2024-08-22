@@ -21,6 +21,7 @@ import { ChaptersForm } from './_components/chapters-form';
 import { AttachmentForm } from './_components/attachment-form';
 import { DescriptionForm } from './_components/description-form';
 import { IChapter } from '@/models/Chapter';
+import { IAttachment } from '@/models/Attachment';
 
 interface CourseIdPageProps {
   params: {
@@ -68,15 +69,35 @@ const CourseIdPage = async ({ params }: CourseIdPageProps) => {
     return redirect('/');
   }
 
+  // Convert fields to plain objects
+  const plainCourse = {
+    ...course[0],
+    _id: course[0]._id.toString(),
+    userId: course[0].userId.toString(),
+    categoryId: course[0].categoryId?.toString(),
+    createdAt: course[0].createdAt.toISOString(),
+    updatedAt: course[0].updatedAt.toISOString(),
+    attachments: course[0].attachments.map((attachment: IAttachment) => ({
+      ...attachment,
+      _id: attachment._id.toString(),
+      courseId: attachment.courseId.toString(),
+    })),
+    chapters: course[0].chapters.map((chapter: IChapter) => ({
+      ...chapter,
+      _id: chapter._id.toString(),
+      courseId: chapter.courseId.toString(),
+    })),
+  };
+
   const categories = await Category.find().sort({ name: 1 }).exec();
 
   const requiredFields = [
-    course[0].title,
-    course[0].price,
-    course[0].imageUrl,
-    course[0].categoryId,
-    course[0].description,
-    course[0].chapters?.some((chapter: IChapter) => chapter.isPublished),
+    plainCourse.title,
+    plainCourse.price,
+    plainCourse.imageUrl,
+    plainCourse.categoryId,
+    plainCourse.description,
+    plainCourse.chapters.some((chapter: IChapter) => chapter.isPublished),
   ];
 
   const totalFields = requiredFields.length;
@@ -86,7 +107,7 @@ const CourseIdPage = async ({ params }: CourseIdPageProps) => {
 
   return (
     <>
-      {!course[0].isPublished && (
+      {!plainCourse.isPublished && (
         <Banner
           variant="warning"
           label="This course is unpublished. It will not be visible to students."
@@ -103,9 +124,9 @@ const CourseIdPage = async ({ params }: CourseIdPageProps) => {
           </div>
 
           <Actions
-            courseId={course[0]._id}
+            courseId={plainCourse._id}
             disabled={!isCompleted}
-            isPublished={course[0].isPublished}
+            isPublished={plainCourse.isPublished}
           />
         </div>
 
@@ -116,15 +137,15 @@ const CourseIdPage = async ({ params }: CourseIdPageProps) => {
               <h2 className="text-xl">Customize your course</h2>
             </div>
 
-            <TitleForm initialData={course[0]} courseId={course[0]._id} />
-            <DescriptionForm initialData={course[0]} courseId={course[0]._id} />
-            <ImageForm initialData={course[0]} courseId={course[0]._id} />
+            <TitleForm initialData={plainCourse} courseId={plainCourse._id} />
+            <DescriptionForm initialData={plainCourse} courseId={plainCourse._id} />
+            <ImageForm initialData={plainCourse} courseId={plainCourse._id} />
             <CategoryForm
-              initialData={course[0]}
-              courseId={course[0]._id}
+              initialData={plainCourse}
+              courseId={plainCourse._id}
               options={categories.map(category => ({
                 label: category.name,
-                value: category._id,
+                value: category._id.toString(),
               }))}
             />
           </div>
@@ -136,7 +157,7 @@ const CourseIdPage = async ({ params }: CourseIdPageProps) => {
                 <h2 className="text-xl">Course chapters</h2>
               </div>
 
-              <ChaptersForm initialData={course[0]} courseId={course[0]._id} />
+              <ChaptersForm initialData={plainCourse} courseId={plainCourse._id} />
             </div>
 
             <div>
@@ -145,7 +166,7 @@ const CourseIdPage = async ({ params }: CourseIdPageProps) => {
                 <h2 className="text-xl">Sell your course</h2>
               </div>
 
-              <PriceForm courseId={course[0]._id} initialData={course[0]} />
+              <PriceForm courseId={plainCourse._id} initialData={plainCourse} />
             </div>
 
             <div>
@@ -154,7 +175,7 @@ const CourseIdPage = async ({ params }: CourseIdPageProps) => {
                 <h2 className="text-xl">Resources & Attachments</h2>
               </div>
 
-              <AttachmentForm initialData={course[0]} courseId={course[0]._id} />
+              <AttachmentForm initialData={plainCourse} courseId={plainCourse._id} />
             </div>
           </div>
         </div>
@@ -164,3 +185,4 @@ const CourseIdPage = async ({ params }: CourseIdPageProps) => {
 };
 
 export default CourseIdPage;
+

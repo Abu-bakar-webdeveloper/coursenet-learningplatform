@@ -1,24 +1,66 @@
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import connectDB from '@/lib/db';
-import { Course } from '@/models/Course';
+import { Course, ICourse } from '@/models/Course';
 import { columns } from './_components/columns';
 import { DataTable } from './_components/data-table';
+import { IChapter } from '@/models/Chapter';
+import { ICategory } from '@/models/Category';
+import { IAttachment } from '@/models/Attachment';
+
+type CourseProps = ICourse & {
+  category: ICategory | null;
+  chapters: IChapter[] | null;
+  attachments: IAttachment[] | null;
+}
 
 const CoursesPage = async () => {
-  // Ensure the database connection is established
   await connectDB();
 
   const { userId } = auth();
-
   if (!userId) return redirect('/');
 
-  // Find courses by userId and sort by createdAt in descending order
   const courses = await Course.find({ userId }).sort({ createdAt: -1 });
+
+  const plainCourses: CourseProps[] = courses.map((course) => {
+    const plainCourse: CourseProps = {
+      ...course.toObject(),
+      _id: course._id.toString(),
+      userId: course.userId.toString(),
+      createdAt: course.createdAt,
+      updatedAt: course.updatedAt,
+      __v: course.__v,
+      title: course.title,
+      isPublished: course.isPublished,
+      description: course.description,
+      imageUrl: course.imageUrl ? course.imageUrl.toString('base64') : undefined,
+      categoryId: course.categoryId ? course.categoryId.toString() : undefined,
+      price: course.price,
+      category: course.category 
+        ? { ...course.category.toObject(), _id: course.category._id.toString() } 
+        : null,
+      attachments: course.attachments 
+        ? course.attachments.map((attachment: IAttachment) => ({
+            _id: attachment._id.toString(),
+            name: attachment.name || '',
+            url: attachment.url || '',
+            courseId: attachment.courseId ? attachment.courseId.toString() : '',
+          })) 
+        : [],
+      chapters: course.chapters 
+        ? course.chapters.map((chapter: IChapter) => ({
+            _id: chapter._id.toString(),
+            title: chapter.title || '',
+          })) 
+        : [],
+    };
+  
+    return plainCourse;
+  }); 
 
   return (
     <div className="p-6">
-      <DataTable columns={columns} data={courses} />
+      <DataTable columns={columns} data={plainCourses} />
     </div>
   );
 }
