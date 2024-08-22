@@ -1,10 +1,12 @@
 import { auth } from '@clerk/nextjs/server';
-// import { utapi } from '@uploadthing/server';
-import { createUploadthing, type FileRouter } from 'uploadthing/next'
+import { UTApi } from "uploadthing/server";
+import { createUploadthing, type FileRouter } from 'uploadthing/next';
 
 // import { isTeacher } from '@/lib/teacher'
 
 const f = createUploadthing()
+
+export const utapi = new UTApi();
 
 const handleAuth = () => {
   const { userId } = auth()
@@ -19,21 +21,21 @@ export const ourFileRouter = {
     .middleware(() => handleAuth())
     .onUploadError(async error => {
       console.error('[UPLOADTHING]', error)
-    //   await utapi.deleteFiles(error.fileKey)
+      await utapi.deleteFiles(error.fileKey)
     })
     .onUploadComplete(() => {}),
   courseAttachment: f(['text', 'image', 'video', 'audio', 'pdf'])
     .middleware(() => handleAuth())
     .onUploadError(async error => {
       console.error('[UPLOADTHING]', error)
-    //   await utapi.deleteFiles(error.fileKey)
+      await utapi.deleteFiles(error.fileKey)
     })
     .onUploadComplete(() => {}),
   chapterVideo: f({ video: { maxFileCount: 1, maxFileSize: '512GB' } })
     .middleware(() => handleAuth())
     .onUploadError(async error => {
       console.error('[UPLOADTHING]', error)
-    //   await utapi.deleteFiles(error.fileKey)
+      await utapi.deleteFiles(error.fileKey)
     })
     .onUploadComplete(() => {}),
 } satisfies FileRouter

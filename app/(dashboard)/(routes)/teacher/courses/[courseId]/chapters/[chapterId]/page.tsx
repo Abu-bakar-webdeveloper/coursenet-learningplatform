@@ -28,7 +28,6 @@ const ChapterIdPage = async ({ params }: ChapterIdPageProps) => {
     return redirect('/');
   }
 
-  // Ensure chapterId and courseId are valid before proceeding
   if (!params.courseId || !params.chapterId) {
     return redirect('/');
   }
@@ -77,10 +76,30 @@ const ChapterIdPage = async ({ params }: ChapterIdPageProps) => {
     return redirect('/');
   }
 
+  const doc = chapter[0];
+
+  // Manually convert MongoDB ObjectIDs to strings
+  const chapterData = {
+    ...doc,
+    _id: doc._id.toString(),
+    courseId: doc.course?._id?.toString() || '',
+    course: {
+      ...doc.course,
+      _id: doc.course?._id?.toString() || '',
+    },
+    muxData: doc.muxData
+      ? {
+          ...doc.muxData,
+          _id: doc.muxData._id?.toString() || '',
+          chapterId: doc.muxData.chapterId?.toString() || '',
+        }
+      : null,
+  };
+
   const requiredFields = [
-    chapter[0].title,
-    chapter[0].description,
-    chapter[0].videoUrl,
+    chapterData.title,
+    chapterData.description,
+    chapterData.videoUrl,
   ];
 
   const totalFields = requiredFields.length;
@@ -90,7 +109,7 @@ const ChapterIdPage = async ({ params }: ChapterIdPageProps) => {
 
   return (
     <>
-      {!chapter[0].isPublished && (
+      {!chapterData.isPublished && (
         <Banner
           variant="warning"
           label="This chapter is unpublished. It will not be visible in the course."
@@ -120,7 +139,7 @@ const ChapterIdPage = async ({ params }: ChapterIdPageProps) => {
                 disabled={!isCompleted}
                 courseId={params.courseId}
                 chapterId={params.chapterId}
-                isPublished={chapter[0].isPublished}
+                isPublished={chapterData.isPublished}
               />
             </div>
           </div>
@@ -134,13 +153,13 @@ const ChapterIdPage = async ({ params }: ChapterIdPageProps) => {
             </div>
 
             <ChapterTitleForm
-              initialData={chapter[0]}
+              initialData={chapterData}
               courseId={params.courseId}
               chapterId={params.chapterId}
             />
 
             <ChapterDescriptionForm
-              initialData={chapter[0]}
+              initialData={chapterData}
               courseId={params.courseId}
               chapterId={params.chapterId}
             />
@@ -152,7 +171,7 @@ const ChapterIdPage = async ({ params }: ChapterIdPageProps) => {
               </div>
 
               <ChapterAccessForm
-                initialData={chapter[0]}
+                initialData={chapterData}
                 courseId={params.courseId}
                 chapterId={params.chapterId}
               />
@@ -166,7 +185,7 @@ const ChapterIdPage = async ({ params }: ChapterIdPageProps) => {
             </div>
 
             <ChapterVideoForm
-              initialData={chapter[0]}
+              initialData={chapterData}
               courseId={params.courseId}
               chapterId={params.chapterId}
             />
