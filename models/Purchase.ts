@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IPurchase extends Document {
+  _id: string;
   userId: string;
   courseId: string;
 }

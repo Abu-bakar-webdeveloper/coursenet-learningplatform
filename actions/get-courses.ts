@@ -1,16 +1,16 @@
 import { Category } from '@/models/Category';
 import { Course } from '@/models/Course';
-import { Purchase } from '@/models/Purchase';
 import { getProgress } from '@/actions/get-progress';
 import connectDB from '@/lib/db';
 import { ICategory } from '@/models/Category';
 import { ICourse } from '@/models/Course';
-import mongoose from 'mongoose';
+import { IPurchase } from '@/models/Purchase';
 
-type CourseWithProgressWithCategory = ICourse & {
+export type CourseWithProgressWithCategory = ICourse & {
   progress: number | null;
   category: ICategory | null;
   chapters: { _id: string }[];
+  purchases: IPurchase[] | null;
 }
 
 type GetCourses = {
