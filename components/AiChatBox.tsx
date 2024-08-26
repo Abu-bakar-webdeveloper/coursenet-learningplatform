@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { useChat, Message } from "ai/react";
 import { Bot, SendHorizonal, Trash, XCircle } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 
 interface AiChatBoxProps {
@@ -20,6 +21,21 @@ export default function AiChatBox({ open, onclose }: AiChatBoxProps) {
     error,
   } = useChat();
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if(scrollRef.current){
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    if(open) {
+      inputRef.current?.focus();
+    }
+  }, [open])
+
   const lastMessageIsUser = messages[messages.length - 1]?.role === "user";
 
   return (
@@ -33,7 +49,7 @@ export default function AiChatBox({ open, onclose }: AiChatBoxProps) {
         <XCircle size={30} className="rounded-full bg-background" />
       </button>
       <div className="flex h-[500px] flex-col rounded border bg-background shadow-xl">
-        <div className="mt-3 h-full overflow-y-auto px-3">
+        <div className="mt-3 h-full overflow-y-auto px-3" ref={scrollRef}>
            {
             messages.map(message => (
                 <ChatMessage message={message} key={message.id}/>
@@ -87,11 +103,13 @@ export default function AiChatBox({ open, onclose }: AiChatBoxProps) {
             onChange={handleInputChange}
             placeholder="Start Chat..."
             className="grow rounded border bg-background px-5 py-2"
+            ref={inputRef}
           />
           <button
             type="submit"
             className="flex items-center justify-center w-10 flex-none disabled:opacity-50"
             disabled={isLoading || input.length === 0}
+            title="Submit button"
           >
             <SendHorizonal size={24} />
           </button>
