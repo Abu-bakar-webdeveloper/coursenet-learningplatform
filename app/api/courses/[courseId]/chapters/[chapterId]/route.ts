@@ -120,7 +120,6 @@ export async function PATCH(
       return new NextResponse('Not found', { status: 404 });
     }
 
-    console.log(chapter)
 
     if (values.videoUrl) {
       const existingMuxData = await MuxData.findOne({ chapterId });

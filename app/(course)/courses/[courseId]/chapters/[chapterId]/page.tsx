@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { Banner } from '@/components/banner';
 import { Preview } from '@/components/preview';
 import { getChapter } from '@/actions/get-chapter';
-import { Separator } from '@/components/ui/separator'
+import { Separator } from '@/components/ui/separator';
 import { VideoPlayer } from './_components/video-player';
 import { CurseEnrollButton } from './_components/course-enroll-button';
 import { CourseProgressButton } from './_components/course-progress-button';
@@ -14,14 +14,14 @@ export default async function ChapterIdPage({
   params,
 }: {
   params: {
-    courseId: string
-    chapterId: string
-  }
+    courseId: string;
+    chapterId: string;
+  };
 }) {
-  const { userId } = auth()
+  const { userId } = auth();
 
   if (!userId) {
-    return redirect('/')
+    return redirect('/');
   }
 
   const {
@@ -36,14 +36,17 @@ export default async function ChapterIdPage({
     userId,
     courseId: params.courseId,
     chapterId: params.chapterId,
-  })
+  });
 
   if (!course || !chapter) {
-    return redirect('/')
+    return redirect('/');
   }
 
-  const isLocked = !chapter.isFree && !purchase
-  const completeOnEnd = !!purchase && !userProgress?.isCompleted
+  const isLocked = !chapter.isFree && !purchase;
+  const completeOnEnd = !!purchase && !userProgress?.isCompleted;
+
+  // Convert nextChapterId to a string or undefined
+  const nextChapterId = nextChapter?._id?.toString() || undefined;
 
   return (
     <div>
@@ -66,7 +69,7 @@ export default async function ChapterIdPage({
             courseId={params.courseId}
             chapterId={params.chapterId}
             completeOnEnd={completeOnEnd}
-            nextChapterId={nextChapter?._id}
+            nextChapterId={nextChapterId}
             playbackId={muxData?.playbackId!}
           />
         </div>
@@ -79,7 +82,7 @@ export default async function ChapterIdPage({
               <CourseProgressButton
                 courseId={params.courseId}
                 chapterId={params.chapterId}
-                nextChapterId={nextChapter?._id}
+                nextChapterId={nextChapterId}
                 isCompleted={!!userProgress?.isCompleted}
               />
             ) : (
@@ -101,10 +104,10 @@ export default async function ChapterIdPage({
               <Separator />
 
               <div className="p-4">
-                {attachments.map(attachment => (
+                {attachments.map((attachment) => (
                   <a
                     target="_blank"
-                    key={attachment._id}
+                    key={attachment._id.toString()}
                     href={attachment.url}
                     rel="noopener noreferrer nofollow external"
                     className="flex items-center w-full p-3 border rounded-md bg-sky-200 text-sky-700 hover:underline"
@@ -119,5 +122,5 @@ export default async function ChapterIdPage({
         </div>
       </div>
     </div>
-  )
+  );
 }

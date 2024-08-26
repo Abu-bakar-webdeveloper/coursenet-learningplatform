@@ -1,10 +1,9 @@
-import mongoose from 'mongoose';
-import connectDB from '@/lib/db';
 import { Purchase } from '@/models/Purchase';
 import { getProgress } from './get-progress';
 import { ICourse } from '@/models/Course';
 import { IChapter } from '@/models/Chapter';
 import { Category, ICategory } from '@/models/Category';
+import connectDB from '@/lib/db';
 
 type CourseWithProgressWithCategory = ICourse & {
   category: ICategory;
@@ -20,6 +19,8 @@ type DashboardCourses = {
 export const getDashboardCourses = async (
   userId: string,
 ): Promise<DashboardCourses> => {
+
+  await connectDB();
   try {
     const purchasedCourses = await Purchase.aggregate([
       { $match: { userId } },

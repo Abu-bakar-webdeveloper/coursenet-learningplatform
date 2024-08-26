@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import connectDB from '@/lib/db';
 import { Course } from '@/models/Course';
 import { Chapter, IChapter } from '@/models/Chapter';

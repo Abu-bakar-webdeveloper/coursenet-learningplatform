@@ -6,7 +6,8 @@ import { getProgress } from '@/actions/get-progress';
 import { CourseNavbar } from './_components/course-navbar';
 import { CourseSidebar } from './_components/course-sidebar';
 import mongoose from 'mongoose';
-
+import { IAttachment } from '@/models/Attachment';
+import { IChapter } from '@/models/Chapter';
 
 export default async function CourseLayout({
   params,
@@ -46,20 +47,37 @@ export default async function CourseLayout({
     },
   ]);
 
-  console.log(course)
-
   if (!course || course.length === 0) return redirect('/');
+
+  const plainCourse = {
+    ...course[0],
+    _id: course[0]._id.toString(),
+    userId: course[0].userId.toString(),
+    categoryId: course[0].categoryId?.toString(),
+    createdAt: course[0].createdAt.toISOString(),
+    updatedAt: course[0].updatedAt.toISOString(),
+    attachments: course[0].attachments.map((attachment: IAttachment) => ({
+      ...attachment,
+      _id: attachment._id.toString(),
+      courseId: attachment.courseId ? attachment.courseId.toString() : null,
+    })),
+    chapters: course[0].chapters.map((chapter: IChapter) => ({
+      ...chapter,
+      _id: chapter._id.toString(),
+      courseId: chapter.courseId.toString(),
+    })),
+  };
 
   const progressCount = await getProgress(userId, course[0]._id);
 
   return (
     <div className="h-full">
       <div className="h-[80px] md:pl-80 fixed inset-y-0 w-full z-50">
-        <CourseNavbar course={course[0]} progressCount={progressCount} />
+        <CourseNavbar course={plainCourse} progressCount={progressCount} />
       </div>
 
       <div className="fixed inset-y-0 z-50 flex-col hidden h-full md:flex w-80">
-        <CourseSidebar course={course[0]} progressCount={progressCount} />
+        <CourseSidebar course={plainCourse} progressCount={progressCount} />
       </div>
 
       <main className="h-full md:pl-80 pt-[80px]">{children}</main>
