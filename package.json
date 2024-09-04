@@ -11,7 +11,9 @@
     "seed": "ts-node scripts/seed.ts"
   },
   "dependencies": {
+    "@ai-sdk/google": "^0.0.46",
     "@clerk/nextjs": "^5.2.3",
+    "@google/generative-ai": "^0.17.1",
     "@hello-pangea/dnd": "^16.6.0",
     "@hookform/resolvers": "^3.9.0",
     "@mux/mux-node": "^8.8.0",
@@ -34,6 +36,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
+    "dotenv": "^16.4.5",
     "lucide-react": "^0.408.0",
     "mongoose": "^8.5.1",
     "next": "14.2.5",

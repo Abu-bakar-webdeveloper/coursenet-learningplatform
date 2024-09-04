@@ -76,6 +76,7 @@ export const ImageForm = ({ courseId, initialData }: ImageFormProps) => {
               alt="Upload"
               src={initialData.imageUrl}
               className="object-cover rounded-md"
+               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </div>
         ))}

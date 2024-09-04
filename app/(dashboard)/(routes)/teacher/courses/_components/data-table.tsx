@@ -1,9 +1,9 @@
 'use client'
 
+import React from 'react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { PlusCircle } from 'lucide-react'
-
 import {
   ColumnDef,
   flexRender,
@@ -56,60 +56,58 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div>
-      <div className="flex items-center justify-between py-4 gap-x-2">
+    <div className="space-y-6">
+      {/* Filter and Add New Course */}
+      <div className="flex items-center justify-between py-4 gap-x-4">
         <Input
           className="md:max-w-sm"
           placeholder="Filter courses..."
           value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}
-          onChange={event =>
+          onChange={(event) =>
             table.getColumn('title')?.setFilterValue(event.target.value)
           }
         />
 
         <Link href="/teacher/create">
-          <Button>
-            <PlusCircle className="w-4 h-4 md:mr-2" />
-
-            <span className="hidden sr-only md:inline-block md:not-sr-only">
-              New Course
-            </span>
+          <Button className="flex items-center gap-x-2">
+            <PlusCircle className="w-5 h-5" />
+            <span className="hidden md:inline-block">New Course</span>
           </Button>
         </Link>
       </div>
 
-      <div className="border rounded-md">
-        <Table>
+      {/* Table */}
+      <div className="border rounded-lg overflow-x-auto">
+        <Table className="min-w-full">
           <TableHeader>
-            {table.getHeaderGroups().map(headerGroup => (
+            {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  )
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map(row => (
+            {table.getRowModel().rows.length ? (
+              table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  className="hover:bg-gray-50 transition-colors duration-200"
                 >
-                  {row.getVisibleCells().map(cell => (
+                  {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </TableCell>
                   ))}
@@ -119,9 +117,9 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-24 text-center text-gray-500"
                 >
-                  No results.
+                  No results found.
                 </TableCell>
               </TableRow>
             )}
@@ -129,24 +127,30 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
-      <div className="flex items-center justify-end py-4 space-x-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
+      {/* Pagination */}
+      <div className="flex items-center justify-between py-4">
+        <span className="text-sm text-gray-500">
+          Page {table.getState().pagination.pageIndex + 1} of{' '}
+          {table.getPageCount()}
+        </span>
+        <div className="flex items-center gap-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   )
