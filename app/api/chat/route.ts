@@ -5,7 +5,8 @@ export const maxDuration = 30;
 
 export async function POST(req: Request) {
     try {
-        const { messages } = await req.json();
+        const body = await req.json();
+        const { messages } = body;
 
         // Add a system message to set the assistant's role and emphasize short responses
         const systemMessage = {
@@ -13,12 +14,9 @@ export async function POST(req: Request) {
             content: "You are a concise assistant for an online learning platform. Please keep responses short and informative."
         };
 
-        // Include the system message at the beginning of the conversation
-        const allMessages = [systemMessage, ...messages];
-
         const result = await streamText({
-            model: google("models/gemini-1.5-pro-latest"),
-            messages: allMessages,
+            model: google("models/gemini-1.5-pro"),
+            messages: [systemMessage, ...messages],
         });
 
         const data = new StreamData();
