@@ -6,7 +6,7 @@ const HeroSection = () => {
   return (
     <section className="relative h-screen flex items-center text-white">
       <Image
-        src="/bg.jpeg"
+        src="/bg1.jpg"
         alt="Background"
         fill
         className="-z-10"
