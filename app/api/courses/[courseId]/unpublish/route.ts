@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 // import { isTeacher } from "@/lib/teacher";
 import { Course } from "@/models/Course";
+import User from "@/models/User";
 
 export async function PATCH(
   req: Request,
@@ -31,6 +32,13 @@ export async function PATCH(
       { isPublished: false },
       { new: true }
     );
+
+    await User.findOneAndUpdate(
+      { userId }, // Find the user by userId
+      { $inc: { numberOfCourses: -1 } }, // Increment numberOfCourses by 1
+      { new: true } // Return the updated user document
+    );
+
 
     return NextResponse.json(unpublishedCourse);
   } catch (error) {

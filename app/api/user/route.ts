@@ -23,7 +23,7 @@ export async function POST(request: Request) {
 
     const newUser = new User({
       userId,
-      username, // This can be undefined now
+      username,
       email,
       numberOfCourses,
       courses,
