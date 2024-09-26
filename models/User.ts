@@ -1,28 +1,18 @@
-import mongoose, { Types } from "mongoose";
-import { ICourse } from "./Course";
+import mongoose, { Schema, Document } from 'mongoose';
+import { ICourse } from './Course';
 
 export interface IUser extends Document {
-  _id: string;
-  userId: string;
-  username?: string;
+  name: string;
   email: string;
-  numberOfCourses?: number;
-  courses: Types.ObjectId[] | ICourse;
+  courses: ICourse[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const userSchema = new mongoose.Schema(
-  {
-    userId: { type: String, required: true, unique: true },
-    username: {
-      type: String,
-    },
-    email: { type: String, required: true },
-    numberOfCourses: { type: Number, default: 0 },
-    courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
-  },
-  { timestamps: true }
-);
+const UserSchema: Schema = new Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  courses: [{ type: Schema.Types.ObjectId, ref: 'Course' }],
+}, { timestamps: true });
 
-const User = mongoose.models.User || mongoose.model<IUser>("User", userSchema);
-
-export default User;
+export const User = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
