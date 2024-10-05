@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import { Course } from '@/models/Course';
 import { Chapter } from '@/models/Chapter';
-import { User } from '@/models/User';
+import  User  from '@/models/User';
 
 export async function PATCH(
   req: Request,

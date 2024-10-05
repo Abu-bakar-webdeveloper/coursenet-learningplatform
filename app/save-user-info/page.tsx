@@ -14,37 +14,17 @@ export default function SaveUserInfoPage() {
     if (!isLoaded || !isSignedIn || !user || isSaving) return;
 
     const saveUserInfo = async () => {
-      setIsSaving(true);
-      setError("");
       try {
-        const {
-          id: userId,
-          username,
-          firstName,
-          lastName,
-          emailAddresses,
-        } = user;
+        setIsSaving(true);
+        setError("");
 
+        const { id: userId, username, firstName, lastName, emailAddresses } = user;
         const email = emailAddresses[0]?.emailAddress || "";
-        const finalUsername =
-          username ||
-          (firstName && lastName
-            ? `${firstName} ${lastName}`
-            : firstName || lastName || email.split("@")[0]);
-
-        console.log("Sending user data to API:", {
-          userId,
-          username: finalUsername,
-          email,
-          numberOfCourses: 0,
-          courses: [],
-        });
+        const finalUsername = username || [firstName, lastName].filter(Boolean).join(" ") || email.split("@")[0];
 
         const response = await fetch("/api/user", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             userId,
             username: finalUsername,
@@ -55,15 +35,12 @@ export default function SaveUserInfoPage() {
         });
 
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Failed to save user info");
+          const { message } = await response.json();
+          throw new Error(message || "Failed to save user info");
         }
 
-        const data = await response.json();
-        console.log("Response from server:", data);
-        router.push("/"); // Redirect to home page after successful data saving
+        router.push("/"); // Redirect after successful save
       } catch (error) {
-        console.error("Error saving user info:", error);
         setError("An error occurred while saving user information");
       } finally {
         setIsSaving(false);
@@ -77,7 +54,7 @@ export default function SaveUserInfoPage() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <p>Saving your information...</p>
       {isSaving && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-4 rounded-md">
             <p>Saving your information...</p>
           </div>

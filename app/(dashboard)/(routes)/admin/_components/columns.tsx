@@ -1,58 +1,57 @@
-'use client'
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import Link from "next/link"
+} from "@/components/ui/dropdown-menu";
+import Link from "next/link";
 
 export type User = {
-  _id: string
-  userId: string,
-  name: string
-  email: string
-  courses: { _id: string; title: string; isPublished: boolean }[]
-  createdAt: Date
-  updatedAt: Date
-  __v: number
-}
+  _id: string;
+  userId: string;
+  name: string;
+  email: string;
+  numberOfCourses: number;
+  courses: { _id: string; title: string; isPublished: boolean }[];
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+};
 
 export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Name
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
   },
   {
     accessorKey: "email",
     header: "Email",
   },
   {
-    accessorKey: "courses",
+    accessorKey: "numberOfCourses", // Directly use numberOfCourses from the User object
     header: "Courses",
     cell: ({ row }) => {
-      const courses = row.original.courses
-      return <div>{courses ? courses.length : 0}</div>
+      const numberOfCourses = row.original.numberOfCourses; // Referencing the direct field
+      return <div>{numberOfCourses ?? 0}</div>; // Fallback to 0 if numberOfCourses is not available
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const user = row.original
+      const user = row.original;
 
       return (
         <DropdownMenu>
@@ -69,7 +68,7 @@ export const columns: ColumnDef<User>[] = [
             <DropdownMenuItem>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      )
+      );
     },
   },
-]
+];

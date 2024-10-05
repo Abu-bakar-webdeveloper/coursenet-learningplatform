@@ -26,14 +26,22 @@ const UserCoursePage = async ({ params }: UserIdPageProps) => {
     return redirect('/');
   }
 
-  const userId = new mongoose.Types.ObjectId(params.UserId);
+  // Use userId as a string since it's stored as a string in the database
+  const userId = params.UserId;
 
+  console.log(userId)
+
+  // Fetch courses for this userId
   const courses = await Course.find({ userId, isPublished: true }).sort({ createdAt: -1 });
 
+  // Check if courses are returned
+  console.log("Fetched Courses: ", courses);
+
+  // Map courses to plain objects with progress
   const plainCourses: CourseWithProgress[] = courses.map((course) => ({
     ...course.toObject(),
     _id: course._id.toString(),
-    userId: course.userId.toString(),
+    userId: course.userId,
     categoryId: course.categoryId?.toString(),
     category: course.category 
       ? { ...course.category.toObject(), _id: course.category._id.toString() } 
@@ -48,15 +56,16 @@ const UserCoursePage = async ({ params }: UserIdPageProps) => {
       _id: chapter._id.toString(),
       title: chapter.title,
     })) ?? [],
-    imageUrl: course.imageUrl?.toString('base64'),
-    progress: null,
+    imageUrl: course.imageUrl,
   }));
 
   return (
     <div>
       <CoursesList items={plainCourses} />
     </div>
-  )
-}
+  );
+};
+
+
 
 export default UserCoursePage
