@@ -28,7 +28,7 @@ const UserCoursePage = async ({ params }: UserIdPageProps) => {
 
   const userId = new mongoose.Types.ObjectId(params.UserId);
 
-  const courses = await Course.find({ userId }).sort({ createdAt: -1 });
+  const courses = await Course.find({ userId, isPublished: true }).sort({ createdAt: -1 });
 
   const plainCourses: CourseWithProgress[] = courses.map((course) => ({
     ...course.toObject(),
@@ -49,7 +49,7 @@ const UserCoursePage = async ({ params }: UserIdPageProps) => {
       title: chapter.title,
     })) ?? [],
     imageUrl: course.imageUrl?.toString('base64'),
-    progress: null, // We'll set this to null as we don't have progress information in this context
+    progress: null,
   }));
 
   return (

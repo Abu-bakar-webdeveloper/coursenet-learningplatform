@@ -1,22 +1,24 @@
-import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import connectDB from '@/lib/db';
 import { User as UserModel } from '@/models/User';
 import { columns, User } from './_components/columns';
 import { DataTable } from './_components/data-table';
 import { ICourse } from '@/models/Course';
+import { isAdmin } from '@/lib/admin';
 
 const AdminPage = async () => {
   await connectDB();
 
-  const { userId } = auth();
-  if (!userId) return redirect('/');
+  if (!isAdmin) {
+    return redirect('/');
+  }
 
   const users = await UserModel.find().sort({ createdAt: -1 });
 
   const plainUsers: User[] = users.map((user) => {
     return {
       _id: user._id.toString(),
+      userId: user.userId,
       name: user.name,
       email: user.email,
       courses: user.courses 

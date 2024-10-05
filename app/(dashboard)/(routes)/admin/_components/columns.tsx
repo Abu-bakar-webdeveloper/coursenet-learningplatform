@@ -13,6 +13,7 @@ import Link from "next/link"
 
 export type User = {
   _id: string
+  userId: string,
   name: string
   email: string
   courses: { _id: string; title: string; isPublished: boolean }[]
@@ -62,7 +63,7 @@ export const columns: ColumnDef<User>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <Link href={`/admin/${user._id}`}>
+            <Link href={`/admin/${user.userId}`}>
               <DropdownMenuItem>See courses</DropdownMenuItem>
             </Link>
             <DropdownMenuItem>Delete</DropdownMenuItem>
