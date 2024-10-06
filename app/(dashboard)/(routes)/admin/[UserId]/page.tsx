@@ -1,5 +1,4 @@
 import React from 'react'
-import mongoose from 'mongoose';
 import { Course, ICourse } from '@/models/Course';
 import { ICategory } from '@/models/Category';
 import { IChapter } from '@/models/Chapter';
@@ -29,13 +28,8 @@ const UserCoursePage = async ({ params }: UserIdPageProps) => {
   // Use userId as a string since it's stored as a string in the database
   const userId = params.UserId;
 
-  console.log(userId)
-
   // Fetch courses for this userId
   const courses = await Course.find({ userId, isPublished: true }).sort({ createdAt: -1 });
-
-  // Check if courses are returned
-  console.log("Fetched Courses: ", courses);
 
   // Map courses to plain objects with progress
   const plainCourses: CourseWithProgress[] = courses.map((course) => ({
@@ -60,7 +54,7 @@ const UserCoursePage = async ({ params }: UserIdPageProps) => {
   }));
 
   return (
-    <div>
+    <div className='m-6'>
       <CoursesList items={plainCourses} />
     </div>
   );

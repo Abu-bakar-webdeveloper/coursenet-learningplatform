@@ -5,6 +5,7 @@ import { BookOpen } from 'lucide-react'
 import { formatPrice } from '@/lib/format'
 import { IconBadge } from '@/components/icon-badge'
 import { CourseProgress } from '@/components/course-progress'
+import { isAdmin } from '@/lib/admin'
 
 interface CourseCardProps {
   id: string
@@ -48,7 +49,7 @@ export const CourseCard = ({
             </div>
           </div>
 
-          {progress !== null ? (
+          {!isAdmin && progress !== null ? (
             <CourseProgress
               size="sm"
               value={progress}

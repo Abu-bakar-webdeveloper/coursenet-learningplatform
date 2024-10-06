@@ -22,8 +22,6 @@ export default async function CourseIdPage({ params }: { params: { courseId: str
     },
   ]);
 
-  console.log(course)
-
   if (!course || course.length === 0 || course[0].chapters.length === 0) {
     return redirect('/');
   }
