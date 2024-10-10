@@ -12,6 +12,7 @@ import axios from 'axios'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { usePathname } from "next/navigation";
 
 interface CourseCardProps {
   id: string
@@ -35,7 +36,9 @@ export const CourseCard = ({
   chaptersLength,
 }: CourseCardProps) => {
   const { userId } = useAuth()
+  const pathname = usePathname();
   const isAdminUser = isAdmin(userId ?? null)
+  const isAdminPage = pathname?.startsWith("/admin");
 
   const handleBlockCourse = async () => {
     try {
@@ -90,7 +93,7 @@ export const CourseCard = ({
           )}
         </CardContent>
       </Link>
-      {isAdminUser && (
+      {isAdminUser && isAdminPage && (
         <CardFooter className="p-4 pt-0">
           {isBlock ? (
             <Button 

@@ -3,8 +3,9 @@ import About from "./_components/AboutUs"
 import Features from "./_components/Features"
 import Footer from "./_components/Footer"
 import HeroSection from "./_components/HeroSection"
-import TeachOnCourseNet from "./_components/TeachOnCoursenet"
+// import TeachOnCourseNet from "./_components/TeachOnCoursenet"
 import AiChatButton from "@/components/AiChatButton"
+import Testimonials from './_components/testimonials'
 
 export default function Component() {
   return (
@@ -12,7 +13,8 @@ export default function Component() {
       <HeroSection />
       <Features />
       <About />
-      <TeachOnCourseNet />
+      <Testimonials />
+      {/* <TeachOnCourseNet /> */}
       <Footer />
       <div className="fixed bottom-5 right-5 z-50">
         <AiChatButton />

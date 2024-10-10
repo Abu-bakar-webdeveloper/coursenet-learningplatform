@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 export default function TeachOnCourseNet() {
   return (
-    <section className="py-12 bg-gray-100">
+    <section className="py-12">
       <div className="container mx-auto px-4 flex flex-col md:flex-row items-center">
         <div className="w-full md:w-1/2 mb-8 md:mb-0">
           <Image

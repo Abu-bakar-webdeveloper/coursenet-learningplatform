@@ -1,16 +1,21 @@
-import { cn } from "@/lib/utils";
-import { useChat, Message } from "ai/react";
-import { Bot, SendHorizonal, Trash, XCircle } from "lucide-react";
-import Link from "next/link";
-import { useEffect, useRef } from "react";
-import ReactMarkdown from "react-markdown";
+"use client"
+
+import { cn } from "@/lib/utils"
+import { useChat, Message } from "ai/react"
+import { Bot, SendHorizontal, Trash, XCircle } from "lucide-react"
+import Link from "next/link"
+import { useEffect, useRef } from "react"
+import ReactMarkdown from "react-markdown"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface AiChatBoxProps {
-  open: boolean;
-  onclose: () => void;
+  open: boolean
+  onClose: () => void
 }
 
-export default function AiChatBox({ open, onclose }: AiChatBoxProps) {
+export default function AiChatBox({ open, onClose }: AiChatBoxProps) {
   const {
     messages,
     input,
@@ -19,151 +24,143 @@ export default function AiChatBox({ open, onclose }: AiChatBoxProps) {
     setMessages,
     isLoading,
     error,
-  } = useChat();
+  } = useChat()
 
-  const inputRef = useRef<HTMLInputElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if(scrollRef.current){
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
     }
-  }, [messages]);
+  }, [messages])
 
   useEffect(() => {
-    if(open) {
-      inputRef.current?.focus();
+    if (open) {
+      inputRef.current?.focus()
     }
   }, [open])
 
-  const lastMessageIsUser = messages[messages.length - 1]?.role === "user";
+  const lastMessageIsUser = messages[messages.length - 1]?.role === "user"
 
   return (
     <div
       className={cn(
-        "bottom-0 right-0 z-50 w-full max-w-[500px] p-1 xl:right-36",
-        open ? "fixed" : "hidden"
+        "fixed bottom-0 right-0 z-50 w-full max-w-[500px] p-4 xl:right-36",
+        open ? "block" : "hidden"
       )}
     >
-      <button onClick={onclose} className="mb-1 ms-auto block">
-        <XCircle size={30} className="rounded-full bg-background" />
-      </button>
-      <div className="flex h-[500px] flex-col rounded border bg-background shadow-xl">
-        <div className="mt-3 h-full overflow-y-auto px-3" ref={scrollRef}>
-           {
-            messages.map(message => (
-                <ChatMessage message={message} key={message.id}/>
-            ))
-           }
-           {
-            isLoading && lastMessageIsUser && (
-              <ChatMessage 
-                message={{
-                  id: "loading",
-                  role: "assistant",
-                  content: "Generating..."
-                }}
-              />
-            )
-           }
-           {error && (
-             <ChatMessage 
-             message={{
-               id: "error",
-               role: "assistant",
-               content: "Something went wrong please try again"
-             }}
-           />
-           )}
-           {
-            !error && messages.length === 0 && (
-                <div className="flex flex-col h-full items-center justify-center gap-3 text-center mx-8">
-                    <Bot size={28}/>
-                    <p className="text-lg font-medium">
-                        sent a message to start AI Chat
-                    </p>
-                    <p>
-                        you can ask the chatbot anything related to website
-                    </p>
-                </div>
-            )
-           }
+      <div className="flex flex-col rounded-lg border bg-background shadow-xl">
+        <div className="flex items-center justify-between border-b p-4">
+          <h2 className="text-lg font-semibold">AI Chat</h2>
+          <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close chat">
+            <XCircle className="h-5 w-5" />
+          </Button>
         </div>
-        <form onSubmit={handleSubmit} className="m-3 flex gap-1">
-          <button
-            type="button"
-            className="flex items-center justify-center w-10 flex-none"
-            title="Clear chat"
-            onClick={() => setMessages([])}
-          >
-            <Trash size={24}/>
-          </button>
-          <input
-            value={input}
-            onChange={handleInputChange}
-            placeholder="Start Chat..."
-            className="grow rounded border bg-background px-5 py-2"
-            ref={inputRef}
-          />
-          <button
-            type="submit"
-            className="flex items-center justify-center w-10 flex-none disabled:opacity-50"
-            disabled={isLoading || input.length === 0}
-            title="Submit button"
-          >
-            <SendHorizonal size={24} />
-          </button>
+        <ScrollArea className="flex-grow p-4" ref={scrollRef}>
+          {messages.length === 0 && !error && (
+            <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
+              <Bot className="h-8 w-8 text-muted-foreground" />
+              <p className="text-lg font-medium">Send a message to start the AI Chat</p>
+              <p className="text-sm text-muted-foreground">
+                You can ask the chatbot anything related to the website
+              </p>
+            </div>
+          )}
+          {messages.map((message) => (
+            <ChatMessage message={message} key={message.id} />
+          ))}
+          {isLoading && lastMessageIsUser && (
+            <ChatMessage
+              message={{
+                id: "loading",
+                role: "assistant",
+                content: "Thinking...",
+              }}
+            />
+          )}
+          {error && (
+            <ChatMessage
+              message={{
+                id: "error",
+                role: "assistant",
+                content: "Something went wrong. Please try again.",
+              }}
+            />
+          )}
+        </ScrollArea>
+        <form onSubmit={handleSubmit} className="border-t p-4">
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={() => setMessages([])}
+              aria-label="Clear chat"
+            >
+              <Trash className="h-4 w-4" />
+            </Button>
+            <Input
+              value={input}
+              onChange={handleInputChange}
+              placeholder="Type your message..."
+              ref={inputRef}
+            />
+            <Button type="submit" size="icon" disabled={isLoading || input.length === 0}>
+              <SendHorizontal className="h-4 w-4" />
+              <span className="sr-only">Send message</span>
+            </Button>
+          </div>
         </form>
       </div>
     </div>
-  );
+  )
 }
 
-interface ChatMessageProps{
-    message: Message
+interface ChatMessageProps {
+  message: Message
 }
 
-function ChatMessage( {message: {role, content}}: ChatMessageProps) {
-    const isAiMessage = role === 'assistant';
+function ChatMessage({ message: { role, content } }: ChatMessageProps) {
+  const isAiMessage = role === "assistant"
 
-    return <div className={cn("mb-3 flex items-start",
-        isAiMessage ? "me-5 justify-start" : "ms-5 justify-end"
-    )}>
-        {isAiMessage && <Bot className="mr-2 flex-none" /> }
-        <div
-        className={cn("rounded-md border px-3 py-2",
-            isAiMessage ? "bg-background" : "bg-foreground text-background"
+  return (
+    <div
+      className={cn(
+        "mb-4 flex items-start",
+        isAiMessage ? "justify-start" : "justify-end"
+      )}
+    >
+      {isAiMessage && <Bot className="mr-2 h-5 w-5 flex-none" />}
+      <div
+        className={cn(
+          "rounded-lg px-3 py-2 max-w-[80%]",
+          isAiMessage
+            ? "bg-muted text-muted-foreground"
+            : "bg-primary text-primary-foreground"
         )}
+      >
+        <ReactMarkdown
+          components={{
+            a: ({ node, ...props }) => (
+              <Link
+                {...props}
+                href={props.href ?? ""}
+                className="text-blue-400 hover:underline"
+              />
+            ),
+            p: ({ node, ...props }) => (
+              <p {...props} className="mt-3 first:mt-0" />
+            ),
+            ul: ({ node, ...props }) => (
+              <ul {...props} className="mt-3 list-inside list-disc first:mt-0" />
+            ),
+            li: ({ node, ...props }) => <li {...props} className="mt-1" />,
+          }}
         >
-            <ReactMarkdown
-            components={{
-                a: ({node, ref, ...props}) => (
-                    <Link 
-                        {...props}
-                        href={props.href ?? ""}
-                        className="text-blue-400 hover:underline"
-                    />
-                ),
-                p: ({node, ...props}) => (
-                    <p {...props} className="mt-3 first:mt-0"/>
-                ),
-                ul: ({node, ...props}) => (
-                    <ul 
-                    {...props}
-                    className="mt-3 list-inside list-disc first:mt-0"
-                    />
-                ),
-                li: ({node, ...props}) => (
-                    <li
-                    {...props}
-                    className="mt-1"
-                    />
-                )
-            }}
-            >
-                {content}
-            </ReactMarkdown>
-        </div>
+          {content}
+        </ReactMarkdown>
+      </div>
     </div>
+  )
 }
-
