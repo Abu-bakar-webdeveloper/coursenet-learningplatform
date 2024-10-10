@@ -25,6 +25,7 @@ export const CoursesList = ({ items }: CoursesListProps) => {
             price={item.price || 0}  // Handle cases where price might be undefined
             imageUrl={item.imageUrl || '/placeholder.png'}  // Provide a default image if undefined
             progress={item.progress}
+            isBlock={item.isBlock}
             category={item?.category?.name || 'Uncategorized'}  // Default text for uncategorized courses
             chaptersLength={item.chapters.length}
           />

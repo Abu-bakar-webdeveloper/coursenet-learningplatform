@@ -32,11 +32,11 @@ const teacherRoutes = [
 ]
 
 const adminRoutes = [
-  {
-    icon: Settings,
-    label: 'Settings',
-    href: '/admin/settings',
-  },
+  // {
+  //   icon: Settings,
+  //   label: 'Settings',
+  //   href: '/admin/settings',
+  // },
   {
     icon: Users,
     label: 'Manage Users',

@@ -1,11 +1,6 @@
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
-import {
-  File,
-  ListChecks,
-  LayoutDashboard,
-  CircleDollarSign,
-} from 'lucide-react';
+import { File, ListChecks, LayoutDashboard, CircleDollarSign } from 'lucide-react';
 import mongoose from 'mongoose';
 import connectDB from '@/lib/db';
 import { Course } from '@/models/Course';
@@ -107,6 +102,22 @@ const CourseIdPage = async ({ params }: CourseIdPageProps) => {
 
   return (
     <>
+      {plainCourse.isBlock && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-md text-center max-w-md">
+            <h2 className="text-xl font-bold text-red-600">This course is blocked!</h2>
+            <p className="mt-4">
+              This course has been blocked by the Admin. If you believe this is a mistake, please
+              contact support at{' '}
+              <a href="mailto:abubakaraw@gmail.com" className="text-blue-600 underline">
+                abubakaraw@gmail.com
+              </a>{' '}
+              with your email and the course title.
+            </p>
+          </div>
+        </div>
+      )}
+
       {!plainCourse.isPublished && (
         <Banner
           variant="warning"

@@ -1,17 +1,35 @@
 'use client'
 
-import Link from "next/link";
-import { Menu, X } from "lucide-react";
-import { useState } from "react";
-import { UserButton } from "@clerk/nextjs";
-import { ReactNode } from "react";
+import Link from "next/link"
+import { Menu, X } from "lucide-react"
+import { useState, useEffect } from "react"
+import { UserButton } from "@clerk/nextjs"
+import { ReactNode } from "react"
+import { Button } from "@/components/ui/button"
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu"
 
 interface LayoutProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 const Layout = ({ children }: LayoutProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const Links = [
     { name: "Home", link: "/" },
@@ -19,42 +37,70 @@ const Layout = ({ children }: LayoutProps) => {
     { name: "Teacher", link: "/teacher/courses" },
     { name: "Projects", link: "#projects" },
     { name: "Contact", link: "#contact" },
-  ];
+  ]
 
   return (
-    <>
-      <div className="shadow-md w-full top-0 left-0 bg-white">
-        <div className="md:flex items-center justify-between py-4 md:px-10 px-7">
-          <div className="text-2xl font-bold flex items-center font-[Poppins] text-primary">
-            <Link href="/">CourseNet</Link>
-          </div>
-          <div
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-2xl absolute right-12 top-5 cursor-pointer text-primary"
-          >
-            {isOpen ? <X /> : <Menu />}
-          </div>
-          <ul
-            className={`md:flex md:items-center md:pb-0 pb-12 absolute md:static md:z-auto z-10
-              left-0 w-full md:w-auto md:pl-0 pl-9 transition-all bg-white
-              duration-500 ease-in ${isOpen ? "top-20 opacity-100" : "top-[-490px]"} md:opacity-100 opacity-0`}
-          >
-            {Links.map((link) => (
-              <li key={link.name} className="md:ml-8 text-xl md:my-0 my-7">
-                <Link href={link.link} className="text-primary hover:text-secondary duration-500">
-                  {link.name}
-                </Link>
-              </li>
-            ))}
-            <div className="ml-5">
+    <div className="flex flex-col min-h-screen">
+      <header className={`w-full transition-all duration-300 ${
+        scrolled ? 'bg-white shadow-md' : 'bg-transparent'
+      }`}>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <Link href="/" className="text-2xl font-bold text-primary transition-colors duration-300 hover:text-blue-600">
+              CourseNet
+            </Link>
+            <NavigationMenu className="hidden md:flex">
+              <NavigationMenuList>
+                {Links.map((link) => (
+                  <NavigationMenuItem key={link.name}>
+                    <Link href={link.link} legacyBehavior passHref>
+                      <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                        {link.name}
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
+                ))}
+              </NavigationMenuList>
+            </NavigationMenu>
+            <div className="flex items-center space-x-4">
               <UserButton />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden"
+                onClick={() => setIsOpen(!isOpen)}
+                aria-label="Toggle menu"
+              >
+                {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </Button>
             </div>
-          </ul>
+          </div>
         </div>
-      </div>
-      <main>{children}</main>
-    </>
-  );
-};
+      </header>
 
-export default Layout;
+      {/* Mobile menu */}
+      {isOpen && (
+        <div className="md:hidden">
+          <nav className="bg-white shadow-lg">
+            {Links.map((link) => (
+              <Link
+                key={link.name}
+                href={link.link}
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out"
+                onClick={() => setIsOpen(false)}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      )}
+
+      <main className="flex-grow">
+        {children}
+      </main>
+    </div>
+  )
+}
+
+export default Layout

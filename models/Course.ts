@@ -10,6 +10,7 @@ export interface ICourse extends Document {
   imageUrl?: string;
   price?: number;
   isPublished: boolean;
+  isBlock: boolean;
   categoryId?: string;
   attachments?: Types.ObjectId[] | IAttachment[]; // It can be an array of ObjectId or populated Attachment
   chapters?: Types.ObjectId[] | IChapter[];
@@ -23,6 +24,7 @@ const courseSchema: Schema = new Schema(
     imageUrl: { type: String },
     price: { type: Number },
     isPublished: { type: Boolean, default: false },
+    isBlock: { type: Boolean, default: false },
     categoryId: { type: String, ref: 'Category' },
     attachments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Attachment' }],
     chapters: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Chapter' }],
