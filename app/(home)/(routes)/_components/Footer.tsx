@@ -14,9 +14,9 @@ const quickLinks = [
 
 const socialLinks = [
   { href: '#', icon: Twitter, label: 'Twitter' },
-  { href: '#', icon: Facebook, label: 'Facebook' },
-  { href: '#', icon: Youtube, label: 'YouTube' },
-  { href: '#', icon: Linkedin, label: 'LinkedIn' },
+  { href: 'https://facebook.com/abubakar.awan.7792/', icon: Facebook, label: 'Facebook' },
+  { href: 'https://www.youtube.com/@abubakarawan2074', icon: Youtube, label: 'YouTube' },
+  { href: 'https://www.linkedin.com/in/abubakar-awan-4b6502227/', icon: Linkedin, label: 'LinkedIn' },
 ]
 
 export default function Footer() {
@@ -41,15 +41,15 @@ export default function Footer() {
             <address className="not-italic">
               <p className="flex items-center mb-2">
                 <MapPin className="h-5 w-5 mr-2" />
-                123 Street, New York, USA
+                123 Street, Faisalabad, Pakistan
               </p>
               <p className="flex items-center mb-2">
                 <Phone className="h-5 w-5 mr-2" />
-                +012 345 67890
+                +92 349 7210925
               </p>
               <p className="flex items-center mb-4">
                 <Mail className="h-5 w-5 mr-2" />
-                info@example.com
+                abubakaraw@gmail.com
               </p>
             </address>
             <div className="flex space-x-2">
@@ -82,9 +82,9 @@ export default function Footer() {
         <div className="border-t border-gray-800 mt-12 py-8">
           <div className="flex flex-col sm:flex-row justify-between items-center">
             <div className="text-center sm:text-left mb-4 sm:mb-0">
-              <p>&copy; {new Date().getFullYear()} <Link href="/" className="text-white hover:underline">Your Site Name</Link>. All Rights Reserved.</p>
+              <p>&copy; {new Date().getFullYear()} <Link href="/" className="text-white hover:underline">CourseNet</Link>. All Rights Reserved.</p>
               <p className="text-sm mt-1">
-                Designed by <a href="https://htmlcodex.com" className="text-white hover:underline" target="_blank" rel="noopener noreferrer">HTML Codex</a>
+                Designed by CourseNet
               </p>
             </div>
             <nav className="flex flex-wrap justify-center sm:justify-end gap-4">

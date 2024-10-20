@@ -35,8 +35,7 @@ const Layout = ({ children }: LayoutProps) => {
     { name: "Home", link: "/" },
     { name: "Courses", link: "/student" },
     { name: "Teacher", link: "/teacher/courses" },
-    { name: "Projects", link: "#projects" },
-    { name: "Contact", link: "#contact" },
+    { name: "Contact", link: "/contactUs" },
   ]
 
   return (

@@ -1,24 +1,31 @@
-import mongoose, { Types } from "mongoose";
+import mongoose, { Types, Document } from "mongoose";
 import { ICourse } from "./Course";
+
+// Define the IUser interface
 export interface IUser extends Document {
   _id: string;
   userId: string;
   username?: string;
   email: string;
   numberOfCourses?: number;
-  courses: Types.ObjectId[] | ICourse;
+  courses: Types.ObjectId[] | ICourse[];
+  isTeacher: boolean;
 }
+
+// Define the Mongoose schema
 const userSchema = new mongoose.Schema(
   {
     userId: { type: String, required: true, unique: true },
-    username: {
-      type: String,
-    },
+    username: { type: String },
     email: { type: String, required: true },
     numberOfCourses: { type: Number, default: 0 },
     courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
+    isTeacher: { type: Boolean, default: false } // Correct type
   },
   { timestamps: true }
 );
+
+// Create the User model
 const User = mongoose.models.User || mongoose.model<IUser>("User", userSchema);
+
 export default User;

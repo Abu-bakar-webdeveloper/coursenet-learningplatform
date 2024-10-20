@@ -80,7 +80,7 @@ export const CourseCard = ({
               {chaptersLength} {chaptersLength === 1 ? 'Chapter' : 'Chapters'}
             </span>
           </div>
-          {!isAdminUser && progress !== null ? (
+          {!progress !== null ? (
             <CourseProgress
               size="sm"
               value={progress}

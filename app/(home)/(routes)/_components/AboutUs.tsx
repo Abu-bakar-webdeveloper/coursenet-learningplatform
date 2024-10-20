@@ -23,14 +23,13 @@ const About = () => {
               About Us
             </h6>
             <h1 className="text-4xl font-bold text-gray-800 mb-6">
-              Welcome to <span className="text-blue-500">eLEARNING</span>
+              Welcome to <span className="text-blue-500">CourseNet</span>
             </h1>
             <p className="text-lg text-gray-600 mb-6">
-              Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam amet diam et eos.
-              Clita erat ipsum et lorem et sit.
+            Welcome to CourseNet, where passion for learning meets innovation in education. We are dedicated to empowering students, professionals, and lifelong learners with the skills and knowledge they need to thrive in todays dynamic world.
             </p>
             <p className="text-lg text-gray-600 mb-6">
-              Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit, sed stet lorem sit clita duo justo magna dolore erat amet.
+            Our platform offers a diverse range of courses designed by experts, tailored to suit different learning styles and goals.
             </p>
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="flex items-center text-gray-600">
@@ -43,11 +42,11 @@ const About = () => {
               </div>
               <div className="flex items-center text-gray-600">
                 <FaArrowRight className="text-blue-400 mr-2" />
-                International Certificate
+                Easy to Use
               </div>
               <div className="flex items-center text-gray-600">
                 <FaArrowRight className="text-blue-400 mr-2" />
-                Career Assistance
+                Video Courses
               </div>
             </div>
           </div>

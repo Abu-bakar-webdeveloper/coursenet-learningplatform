@@ -47,7 +47,7 @@ export default async function ChapterIdPage({
   }
 
   // Set isLocked based on whether the user is an admin or not
-  const isLocked = !admin && !chapter.isFree && !purchase; // Admins bypass the lock
+  const isLocked = !chapter.isFree && !purchase; // Admins bypass the lock
   const completeOnEnd = !!purchase && !userProgress?.isCompleted;
 
   // Convert nextChapterId to a string or undefined

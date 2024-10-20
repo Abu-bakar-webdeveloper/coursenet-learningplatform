@@ -7,6 +7,8 @@ import { DataTable } from './_components/data-table';
 import { IChapter } from '@/models/Chapter';
 import { ICategory } from '@/models/Category';
 import { IAttachment } from '@/models/Attachment';
+import User from '@/models/User';
+import { isAdmin } from '@/lib/admin';
 
 type CourseProps = ICourse & {
   category: ICategory | null;
@@ -16,9 +18,20 @@ type CourseProps = ICourse & {
 
 const CoursesPage = async () => {
   await connectDB();
-
+  
   const { userId } = auth();
+
+  const user = await User.findOne({userId});
+  
+  if(!isAdmin){  
   if (!userId) return redirect('/');
+
+  if (!user) return redirect('/'); // Redirect if user not found
+
+  // Check if user is a teacher, if not redirect to teacher-info page
+  if (!user.isTeacher) {
+    return redirect('/teacher-info');
+  }}
 
   const courses = await Course.find({ userId }).sort({ createdAt: -1 });
 
